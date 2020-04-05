@@ -41,8 +41,6 @@ function Map:init()
     self.items = Items(self)
     self.wizard = Wizard(self)
 
-
-
     self.camX = 0
     self.camY = 0
 
@@ -288,6 +286,6 @@ function Map:render()
 
 
     self.wizard:render()
-    -- love.graphics.draw(map.mouse_img, love.mouse.getX(), love.mouse.getY())
-    love.graphics.draw(mouse_img, love.mouse.getX() + self.camX, love.mouse.getY() + self.camY)
+    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.draw(mouse_img, MOUSE_X - 3, MOUSE_Y - 3)
 end

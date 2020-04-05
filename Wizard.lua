@@ -5,7 +5,7 @@ ON_FIRE_TILE = false
 FIREBALLS_ACTIVE = false
 ICE_ACTIVE = false
 
-WALKING_SPEED = 250
+WALKING_SPEED = 350
 local active_direction = 's'
 local fireball_timer = 0
 local tick = 5
@@ -22,7 +22,7 @@ function Wizard:init(map)
     self.width = 32
     self.height = 32
     self.xOffset = 16
-    self.yOffset = 18
+    self.yOffset = 22
     self.y1 = self.y + self.height
     self.x1 = self.x + self.width
 
@@ -181,6 +181,8 @@ function Wizard:init(map)
 
             if love.keyboard.wasPressed('space') then
                 if ICE_ACTIVE == true then
+                    self.dx = 0
+                    self.dy = 0
                     self.state = 'casting_frost_release'
                 else
                    self.state = 'casting_fire_charge'
@@ -203,6 +205,8 @@ function Wizard:init(map)
 
             if love.keyboard.wasPressed('space') then
                 if ICE_ACTIVE == true then
+                    self.dx = 0
+                    self.dy = 0
                     self.state = 'casting_frost_release'
                 else
                    self.state = 'casting_fire_charge'
@@ -310,7 +314,7 @@ function Wizard:init(map)
             local aim_x = MOUSE_X
             local aim_y = MOUSE_Y
             CASTING_FROST = true
-            self.frostray:spawn_frostray(self.x + 16, self.y + 16, aim_x, aim_y)
+            self.frostray:spawn_frostray(self.x + self.xOffset, self.y + self.yOffset, aim_x, aim_y)
 
             -- if active_direction == 'd' then
             --     self.dx = -15
@@ -333,6 +337,15 @@ function Wizard:init(map)
             elseif self:movement_func() then
                 CASTING_FROST = false
                 self.state = 'walking'
+            elseif ice_timer < 0 then
+                CASTING_FROST = false
+                ICE_ACTIVE = false
+                for i, v in ipairs(Map_items) do
+                    if v.item == BLANK_ICE then
+                        v.item = ICE_POTION
+                    end
+                end
+                self.state = 'idle'     
             end
             
         end
@@ -421,7 +434,7 @@ function Wizard:potion_mechanics()
         elseif item_id == ICE_POTION and ICE_ACTIVE == false then
             FIREBALLS_ACTIVE = false
             ICE_ACTIVE = true
-            ice_timer = 10
+            ice_timer = 7
             for i, v in ipairs(Map_items) do
                 if v.item == ICE_POTION then
                     v.item = BLANK_ICE
@@ -647,7 +660,7 @@ local x_pos_shift = 0
 function Wizard:render()
 
 
-    if MOUSE_X - self.x > 0 then
+    if MOUSE_X - self.x - self.xOffset > 0 then
         x_scale = -1
         x_pos_shift = self.width
     else
@@ -658,22 +671,32 @@ function Wizard:render()
     self.items:render()
     
     love.graphics.draw(self.texture, self.currentFrame, self.x + x_pos_shift, self.y, 0, x_scale, 1)
+    -- love.graphics.line(self.x + self.xOffset, self.y + self.yOffset, MOUSE_X, MOUSE_Y)
+    -- love.graphics.circle("line", self.x + self.xOffset, self.y + self.yOffset - 16, self.xOffset)
 
     if FIREBALLS_ACTIVE == true then
+        love.graphics.setColor(1, 1, 1, 255)
         love.graphics.draw(self.items.potion_spritesheet, self.items.potion_sprites[FIRE_POTION], self.map.camX + 20, self.map.camY + 20, 0, 2, 2)
+        love.graphics.setFont(fancyfont)
+        love.graphics.setColor(0, 0, 0, 255)
         love.graphics.print(tostring(remaining_fireballs), self.map.camX + 36, self.map.camY + 44)
     elseif ICE_ACTIVE == true then
+        love.graphics.setColor(1, 1, 1, 255)        
         love.graphics.draw(self.items.potion_spritesheet, self.items.potion_sprites[ICE_POTION], self.map.camX + 20, self.map.camY + 20, 0, 2, 2)
-        love.graphics.print(tostring(ice_timer), self.map.camX + 36, self.map.camY + 44)
+        love.graphics.setFont(fancyfont)
+        love.graphics.setColor(0, 0, 0, 255)
+        love.graphics.print(string.format("%.1f", ice_timer), self.map.camX + 34, self.map.camY + 44)
     end
 
+    love.graphics.setColor(1, 1, 1, 1)
     self.fireball:fireball_render()
 
     if CASTING_FROST == true then
-        self.frostray:frostray_render(self.x + 16, self.y + 8)
+        love.graphics.setColor(1, 1, 1, 1)
+        self.frostray:frostray_render(self.x + self.xOffset, self.y + (self.yOffset - 16))
     end
-
-
+    love.graphics.setFont(defaultfont)
+    love.graphics.setColor(0, 0, 0, 1)
     love.graphics.print("x: " ..string.format("%.0f", self.x), self.map.camX + 20, self.map.camY + 70)
     love.graphics.print("y: " ..string.format("%.0f", self.y), self.map.camX + 20, self.map.camY + 80)
     love.graphics.print("tile x: " ..string.format("%.1f", 1 + (self.x / map.tileWidth)), self.map.camX + 20, self.map.camY + 90)
@@ -681,10 +704,12 @@ function Wizard:render()
     love.graphics.print("dx: " ..string.format("%.2f", self.dx), self.map.camX + 20, self.map.camY + 110)
     love.graphics.print("dy: " ..string.format("%.2f", self.dy), self.map.camX + 20, self.map.camY + 120)
 
+
     love.graphics.print("mouse x: " ..string.format("%.2f", MOUSE_X), self.map.camX + 20, self.map.camY + 140)
     love.graphics.print("mouse y: " ..string.format("%.2f", MOUSE_Y), self.map.camX + 20, self.map.camY + 150)
-    love.graphics.print("diff x: " ..string.format("%.2f", MOUSE_X - self.x), self.map.camX + 20, self.map.camY + 160)
-    love.graphics.print("diff y: " ..string.format("%.2f", MOUSE_Y -self.y), self.map.camX + 20, self.map.camY + 170)
+    love.graphics.print("diff x: " ..string.format("%.2f", MOUSE_X - self.x - self.xOffset), self.map.camX + 20, self.map.camY + 160)
+    love.graphics.print("diff y: " ..string.format("%.2f", MOUSE_Y -self.y - self.yOffset), self.map.camX + 20, self.map.camY + 170)
+    love.graphics.print("angle: " ..string.format((180 / math.pi)*(math.atan((MOUSE_Y - self.y - self.yOffset)/(MOUSE_X - self.x - self.xOffset)))), self.map.camX + 20, self.map.camY + 180)
 
     love.graphics.print("state: " ..tostring(self.state), self.map.camX + 20, self.map.camY + 190)
     love.graphics.print("direction: " ..tostring(self.direction), self.map.camX + 20, self.map.camY + 200)

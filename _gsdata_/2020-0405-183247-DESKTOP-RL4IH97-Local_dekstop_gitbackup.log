@@ -1,0 +1,20 @@
+2020-04-05 18:32:47: == Rename Conflict Losing File is On, expect some weirdness in auto-resolving Vertical Conflicts
+2020-04-05 18:32:47: -- Analysis Started by On File Change First Full Analyze Upon File Monitoring Start
+2020-04-05 18:32:47: Do Not Propagate Deletions: 1-way deletions reverted: 1
+2020-04-05 18:32:47: Changes: 10, Conflicts: 0, CopyTime: 0, FixState: 0, Errors: 0, All: 35
+2020-04-05 18:32:47: Left to Right: Copy File: 10 
+2020-04-05 18:32:47: == Sync Started by On File Change First Full Analyze Upon File Monitoring Start
+2020-04-05 18:32:47: Create Folder 'C:/Users/eddie/OneDrive/Computer Science/Github/Wizard_Quest_git/master_fonts'
+2020-04-05 18:32:47: Copy Over 'C:/Users/eddie/OneDrive/Computer Science/Love2D Games/Wizard Quest/Wizard_Quest/Frostray.lua' -> 'C:/Users/eddie/OneDrive/Computer Science/Github/Wizard_Quest_git/Frostray.lua' (1,649)
+2020-04-05 18:32:47: Copy Over 'C:/Users/eddie/OneDrive/Computer Science/Love2D Games/Wizard Quest/Wizard_Quest/main.lua' -> 'C:/Users/eddie/OneDrive/Computer Science/Github/Wizard_Quest_git/main.lua' (2,751)
+2020-04-05 18:32:47: Copy Over 'C:/Users/eddie/OneDrive/Computer Science/Love2D Games/Wizard Quest/Wizard_Quest/Map.lua' -> 'C:/Users/eddie/OneDrive/Computer Science/Github/Wizard_Quest_git/Map.lua' (7,823)
+2020-04-05 18:32:47: Copy New 'C:/Users/eddie/OneDrive/Computer Science/Love2D Games/Wizard Quest/Wizard_Quest/master_fonts/CaviarDreams.ttf' -> 'C:/Users/eddie/OneDrive/Computer Science/Github/Wizard_Quest_git/master_fonts/CaviarDreams.ttf' (58,864)
+2020-04-05 18:32:47: On File Change Monitoring started on file:///~eddie/OneDrive/Computer Science/Love2D Games/Wizard Quest/Wizard_Quest
+2020-04-05 18:32:47: On File Change Monitoring started on file:///~eddie/OneDrive/Computer Science/Github/Wizard_Quest_git
+2020-04-05 18:32:48: Copy New 'C:/Users/eddie/OneDrive/Computer Science/Love2D Games/Wizard Quest/Wizard_Quest/master_fonts/Enchanted Land.otf' -> 'C:/Users/eddie/OneDrive/Computer Science/Github/Wizard_Quest_git/master_fonts/Enchanted Land.otf' (208,428)
+2020-04-05 18:32:48: Copy New 'C:/Users/eddie/OneDrive/Computer Science/Love2D Games/Wizard Quest/Wizard_Quest/master_fonts/Oswald-Regular.ttf' -> 'C:/Users/eddie/OneDrive/Computer Science/Github/Wizard_Quest_git/master_fonts/Oswald-Regular.ttf' (81,076)
+2020-04-05 18:32:48: Copy New 'C:/Users/eddie/OneDrive/Computer Science/Love2D Games/Wizard Quest/Wizard_Quest/master_fonts/Quicksand_Regular.otf' -> 'C:/Users/eddie/OneDrive/Computer Science/Github/Wizard_Quest_git/master_fonts/Quicksand_Regular.otf' (28,196)
+2020-04-05 18:32:48: Copy New 'C:/Users/eddie/OneDrive/Computer Science/Love2D Games/Wizard Quest/Wizard_Quest/master_graphics/Casting/Frostray/Frostray3_spritesheet.png' -> 'C:/Users/eddie/OneDrive/Computer Science/Github/Wizard_Quest_git/master_graphics/Casting/Frostray/Frostray3_spritesheet.png' (27,212)
+2020-04-05 18:32:48: Copy Over 'C:/Users/eddie/OneDrive/Computer Science/Love2D Games/Wizard Quest/Wizard_Quest/Wizard.lua' -> 'C:/Users/eddie/OneDrive/Computer Science/Github/Wizard_Quest_git/Wizard.lua' (23,448)
+2020-04-05 18:32:48: == Sync Complete. Time: 00:00:01, Speed: 0.00/s, OK: 10, Errors: 0
+2020-04-05 18:32:48: 

@@ -7,8 +7,8 @@ local ice_dt_store = 0
 
 function Frostray:init(map)
 
-    self.frostray_spritesheet = love.graphics.newImage('master_graphics/Casting/Frostray/Frostray_spritesheet.png')
-    self.frames = generateQuads(self.frostray_spritesheet, 64, 32)
+    self.frostray_spritesheet = love.graphics.newImage('master_graphics/Casting/Frostray/Frostray2_spritesheet.png')
+    self.frames = generateQuads(self.frostray_spritesheet, 128, 32)
 
     self.frost_animation = Animation({
         texture = self.frostray_spritesheet,

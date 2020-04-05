@@ -16,14 +16,21 @@ WINDOW_HEIGHT = 1080
 VIRTUAL_WIDTH = WINDOW_WIDTH / 2.5
 VIRTUAL_HEIGHT = WINDOW_HEIGHT / 2.5
 
-love.graphics.setDefaultFilter('nearest', 'nearest')
 
+love.graphics.setDefaultFilter('nearest', 'nearest')
 map = Map()
 
 -- initialisation of objects and data
 function love.load()
     love.window.setTitle('Wizard Quest')
-        
+
+    defaultfont = love.graphics.getFont()
+    fancyfont = love.graphics.newFont('master_fonts/CaviarDreams.ttf', 12)
+    nicefont = love.graphics.newFont('master_fonts/Oswald-Regular.ttf', 12)
+    
+    -- love.graphics.setFont(fancyfont)
+    
+
     push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, {
         fullscreen = false,
         vsync = true,
@@ -35,6 +42,8 @@ function love.load()
 
     love.mouse.setVisible(false)
     love.mouse.setRelativeMode(true)
+
+    
     mouse_img = love.graphics.newImage('master_graphics/Map/pointer.png')
 
 
