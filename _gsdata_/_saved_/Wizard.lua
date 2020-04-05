@@ -641,23 +641,13 @@ function Wizard:check_item_Right_collision(collide_type_table)
     return false
 end
 
-local x_scale = 1
-local x_pos_shift = 0
+
 
 function Wizard:render()
 
-
-    if MOUSE_X - self.x > 0 then
-        x_scale = -1
-        x_pos_shift = self.width
-    else
-        x_scale = 1
-        x_pos_shift = 0
-    end
-
     self.items:render()
     
-    love.graphics.draw(self.texture, self.currentFrame, self.x + x_pos_shift, self.y, 0, x_scale, 1)
+    love.graphics.draw(self.texture, self.currentFrame, self.x, self.y, 0)
 
     if FIREBALLS_ACTIVE == true then
         love.graphics.draw(self.items.potion_spritesheet, self.items.potion_sprites[FIRE_POTION], self.map.camX + 20, self.map.camY + 20, 0, 2, 2)

@@ -15,7 +15,7 @@ BLANK_ICE = 11
 
 function Items:init(map)
 
-    self.potion_spritesheet = love.graphics.newImage('master_graphics/Map/Potions.png')
+    self.potion_spritesheet = love.graphics.newImage('Graphics/Map/Potions.png')
     self.potion_sprites = generateQuads(self.potion_spritesheet, 19, 24)
     
     self.itemWidth = 19

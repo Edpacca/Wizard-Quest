@@ -29,7 +29,7 @@ local SCROLL_SPEED = 300
 
 function Map:init()
 
-    self.spritesheet = love.graphics.newImage('master_graphics/Map/Map1_tilesheet_2.png')
+    self.spritesheet = love.graphics.newImage('Graphics/Map/Map1_tilesheet_2.png')
     self.sprites = generateQuads(self.spritesheet, 32, 32)
 
     self.tileWidth = 32

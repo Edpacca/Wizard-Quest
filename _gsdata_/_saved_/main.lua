@@ -35,7 +35,7 @@ function love.load()
 
     love.mouse.setVisible(false)
     love.mouse.setRelativeMode(true)
-    mouse_img = love.graphics.newImage('master_graphics/Map/pointer.png')
+    mouse_img = love.graphics.newImage('Graphics/Map/pointer.png')
 
 
 
