@@ -41,6 +41,9 @@ function Frostray:spawn_frostray(x, y, aim_x, aim_y)
     elseif x_vector > 0 and y_vector < 0 then
         angle = (math.atan(y_vector / x_vector)) + (2 * math.pi)
     end
+
+    
+
 end
 
 

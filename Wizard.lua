@@ -14,8 +14,8 @@ check_tile = 0
 
 function Wizard:init(map)
 
-    self.y = map.tileWidth * 30
-    self.x = map.tileWidth * 15
+    self.y = map.tileWidth * 28
+    self.x = map.tileWidth * 45
 
     self.dx = 0
     self.dy = 0
@@ -31,6 +31,7 @@ function Wizard:init(map)
     self.frostray = Frostray(self)
     self.map = map
  
+    
     self.texture = love.graphics.newImage('master_graphics/Wizard_spritesheet.png')
 
     self.state = 'startup'
@@ -443,6 +444,11 @@ function Wizard:potion_mechanics()
 
                 end
             end
+        elseif item_id == BOOK1_CL then
+                    self.items:placeItem(BOOK1_L, 31, 49, 6, -3, 0)
+                    self.items:placeItem(BOOK1_R, 31, 49, 6 + 19, -3, 0)
+
+
         end
     end
 end
@@ -668,27 +674,12 @@ function Wizard:render()
         x_pos_shift = 0
     end
 
-    self.items:render()
+
         
     love.graphics.draw(self.texture, self.currentFrame, self.x + x_pos_shift, self.y, 0, x_scale, 1)
     if love.mouse.isDown(2) then
         love.graphics.setColor(1, 1, 1, 0.2)
         love.graphics.line(self.x + self.xOffset, self.y + self.yOffset, MOUSE_X, MOUSE_Y)
-    end
-    -- love.graphics.circle("line", self.x + self.xOffset, self.y + self.yOffset - 16, self.xOffset)
-
-    if FIREBALLS_ACTIVE == true then
-        love.graphics.setColor(1, 1, 1, 1)
-        love.graphics.draw(self.items.potion_spritesheet, self.items.potion_sprites[FIRE_POTION], self.map.camX + 20, self.map.camY + 20, 0, 2, 2)
-        love.graphics.setFont(fancyfont)
-        love.graphics.setColor(0, 0, 0, 1)
-        love.graphics.print(tostring(remaining_fireballs), self.map.camX + 36, self.map.camY + 44)
-    elseif ICE_ACTIVE == true then
-        love.graphics.setColor(1, 1, 1, 1)        
-        love.graphics.draw(self.items.potion_spritesheet, self.items.potion_sprites[ICE_POTION], self.map.camX + 20, self.map.camY + 20, 0, 2, 2)
-        love.graphics.setFont(fancyfont)
-        love.graphics.setColor(0, 0, 0, 1)
-        love.graphics.print(string.format("%.1f", ice_timer), self.map.camX + 34, self.map.camY + 44)
     end
 
     love.graphics.setColor(1, 1, 1, 1)
@@ -727,7 +718,6 @@ function Wizard:render()
     love.graphics.print("CASTING_FROST: " ..tostring(CASTING_FROST), self.map.camX + 20, self.map.camY + 290)
     love.graphics.print("ice_timer: " ..string.format("%.2f", ice_timer), self.map.camX + 20, self.map.camY + 300)
 
-
-
+    love.graphics.print("active orbs: " ..string.format(ACTIVE_FB_ORBS), self.map.camX + 20, self.map.camY + 320)
 
 end

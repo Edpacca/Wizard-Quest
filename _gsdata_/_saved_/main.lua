@@ -7,6 +7,7 @@ require 'Animation'
 require 'Fireball'
 require 'Frostray'
 require 'Items'
+require 'Map64'
 require 'Map'
 require 'Wizard'
 

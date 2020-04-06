@@ -6,6 +6,8 @@ FIREBALLS = {}
 SMALL_FIREBALL_SPEED = 175
 BIG_FIREBALL_SPEED = 225
 
+ACTIVE_FB_ORBS = 0
+
 fireball_scale = 1
 remaining_fireballs = 0
 
@@ -30,13 +32,47 @@ function Fireball:fireball_update(dt)
         x_speed_measure = (FIREBALLS[i].nfb_x - x_init) / fb_timer
         y_speed_measure = (FIREBALLS[i].nfb_y - y_init) / fb_timer
 
-        if map:collides(map:tileAt(FIREBALLS[i].nfb_x, FIREBALLS[i].nfb_y)) then
+        
+        if map:fireball_interact(map:tileAt(FIREBALLS[i].nfb_x, FIREBALLS[i].nfb_y)) then
+            if map:tileAt(FIREBALLS[i].nfb_x, FIREBALLS[i].nfb_y).id == ALCOVE_ORB_OFF_E then
+                map:setTile(math.floor(FIREBALLS[i].nfb_x / 32) + 1,
+                math.floor(FIREBALLS[i].nfb_y / 32) + 1, ALCOVE_ORB_ON_E)
+                ACTIVE_FB_ORBS = ACTIVE_FB_ORBS + 1
+            elseif map:tileAt(FIREBALLS[i].nfb_x, FIREBALLS[i].nfb_y).id == ALCOVE_ORB_OFF_S then
+                map:setTile(math.floor(FIREBALLS[i].nfb_x / 32) + 1,
+                math.floor(FIREBALLS[i].nfb_y / 32) + 1, ALCOVE_ORB_ON_S)
+                ACTIVE_FB_ORBS = ACTIVE_FB_ORBS + 1
+            elseif map:tileAt(FIREBALLS[i].nfb_x, FIREBALLS[i].nfb_y).id == ALCOVE_ORB_OFF_N then
+                map:setTile(math.floor(FIREBALLS[i].nfb_x / 32) + 1,
+                math.floor(FIREBALLS[i].nfb_y / 32) + 1, ALCOVE_ORB_ON_N)
+                ACTIVE_FB_ORBS = ACTIVE_FB_ORBS + 1
+            elseif map:tileAt(FIREBALLS[i].nfb_x, FIREBALLS[i].nfb_y).id == ALCOVE_ORB_OFF_W then
+                map:setTile(math.floor(FIREBALLS[i].nfb_x / 32) + 1,
+                math.floor(FIREBALLS[i].nfb_y / 32) + 1, ALCOVE_ORB_ON_W)
+                ACTIVE_FB_ORBS = ACTIVE_FB_ORBS + 1
+            elseif map:tileAt(FIREBALLS[i].nfb_x, FIREBALLS[i].nfb_y).id == WOOD_V then
+                map:setTile(math.floor(FIREBALLS[i].nfb_x / 32) + 1,
+                math.floor(FIREBALLS[i].nfb_y / 32) + 1, WOOD_V_BURNT)
+            elseif map:tileAt(FIREBALLS[i].nfb_x, FIREBALLS[i].nfb_y).id == WOOD_H then
+                map:setTile(math.floor(FIREBALLS[i].nfb_x / 32) + 1,
+                math.floor(FIREBALLS[i].nfb_y / 32) + 1, WOOD_H_BURNT)
+            elseif map:tileAt(FIREBALLS[i].nfb_x, FIREBALLS[i].nfb_y).id == WOOD_H_BURNT or 
+            map:tileAt(FIREBALLS[i].nfb_x, FIREBALLS[i].nfb_y).id == WOOD_V_BURNT then
+                map:setTile(math.floor(FIREBALLS[i].nfb_x / 32) + 1,
+                math.floor(FIREBALLS[i].nfb_y / 32) + 1, DIRT)
+
+            end
+
+            table.remove(FIREBALLS, i)
+        elseif map:collides(map:tileAt(FIREBALLS[i].nfb_x, FIREBALLS[i].nfb_y)) then
             table.remove(FIREBALLS, i)
         end
     end
 
 end
 
+-- Credit to Jens Genburg for initial shooter mechanics 
+-- https://dev.to/jeansberg/make-a-shooter-in-lualove2d---part-2
 function Fireball:spawn_fireball(x, y, aim_x, aim_y, scale)
 
     fb_timer = 0
@@ -51,7 +87,8 @@ function Fireball:spawn_fireball(x, y, aim_x, aim_y, scale)
 
 end
 
-
+-- Credit to Jens Genburg for initial shooter mechanics 
+-- https://dev.to/jeansberg/make-a-shooter-in-lualove2d---part-2
 function Fireball:fireball_render()
     for i, new_fireball in ipairs(FIREBALLS) do
 
