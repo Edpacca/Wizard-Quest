@@ -21,14 +21,11 @@ function Frostray:init(map)
     
 end
 
-
-
 function Frostray:frostray_update(dt)
 
     self.frost_animation:update(dt)
     self.currentFrame = self.frost_animation:getCurrentFrame()
     
-
 end
 
 function Frostray:spawn_frostray(x, y, aim_x, aim_y)
@@ -44,7 +41,6 @@ function Frostray:spawn_frostray(x, y, aim_x, aim_y)
     elseif x_vector > 0 and y_vector < 0 then
         angle = (math.atan(y_vector / x_vector)) + (2 * math.pi)
     end
-
 end
 
 

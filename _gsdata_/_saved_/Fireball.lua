@@ -3,8 +3,8 @@ Fireball = Class{}
 FIREBALL_SPEED = 175
 FIREBALLS = {}
 
-SMALL_FIREBALL_SPEED = 17
-BIG_FIREBALL_SPEED = 22
+SMALL_FIREBALL_SPEED = 175
+BIG_FIREBALL_SPEED = 225
 
 fireball_scale = 1
 remaining_fireballs = 0
@@ -55,24 +55,12 @@ end
 function Fireball:fireball_render()
     for i, new_fireball in ipairs(FIREBALLS) do
 
-
-        love.graphics.draw(FIREBALLS[i].img, FIREBALLS[i].nfb_x, FIREBALLS[i].nfb_y, 0, nfb_scale, nfb_scale)
-
+        love.graphics.draw(FIREBALLS[i].img, FIREBALLS[i].nfb_x, FIREBALLS[i].nfb_y, 0 + fb_timer, FIREBALLS[i].nfb_scale, FIREBALLS[i].nfb_scale)
 
         love.graphics.print("Fireball "..tostring(i), FIREBALLS[i].nfb_x - 20, FIREBALLS[i].nfb_y - 50)
         love.graphics.print("x_speed: " ..string.format("%.2f", FIREBALLS[i].x_speed), FIREBALLS[i].nfb_x - 20, FIREBALLS[i].nfb_y - 30)
         love.graphics.print("y_speed: " ..string.format("%.2f", FIREBALLS[i].y_speed), FIREBALLS[i].nfb_x - 20, FIREBALLS[i].nfb_y - 20)
         love.graphics.print("sum_speed: " ..string.format("%.2f", math.abs(FIREBALLS[i].x_speed) + math.abs(FIREBALLS[i].y_speed)), FIREBALLS[i].nfb_x - 20, FIREBALLS[i].nfb_y - 40)
-        love.graphics.print("fb_timer: " ..string.format("%.2f", fb_timer), 200, 445)
-        love.graphics.print("x speed: " ..string.format("%.2f", x_speed_measure), 200, 460)
-        love.graphics.print("y speed: " ..string.format("%.2f", y_speed_measure), 200, 475)
-        love.graphics.print("sum speed: " ..string.format("%.0f", math.abs(x_speed_measure) + math.abs(y_speed_measure)), 200, 490)
-        love.graphics.print("dt: " ..string.format("%.3f", dt_store), 200, 505)
-        love.graphics.print("fireballs: " ..tostring(NUM_FIREBALLS), 200, 520)
-        love.graphics.print("fireballs: " ..tostring(table.getn(FIREBALLS)), 200, 535)
-
-        love.graphics.print("x_vector: " ..string.format("%.0f", x_vector), 200, 415)
-        love.graphics.print("y_vector: " ..string.format("%.0f", y_vector), 200, 430)
 
     end
 end

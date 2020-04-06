@@ -14,8 +14,8 @@ check_tile = 0
 
 function Wizard:init(map)
 
-    self.y = map.tileWidth * 28
-    self.x = map.tileWidth * 44
+    self.y = map.tileWidth * 30
+    self.x = map.tileWidth * 15
 
     self.dx = 0
     self.dy = 0
@@ -669,22 +669,25 @@ function Wizard:render()
     end
 
     self.items:render()
-    
+        
     love.graphics.draw(self.texture, self.currentFrame, self.x + x_pos_shift, self.y, 0, x_scale, 1)
-    -- love.graphics.line(self.x + self.xOffset, self.y + self.yOffset, MOUSE_X, MOUSE_Y)
+    if love.mouse.isDown(2) then
+        love.graphics.setColor(1, 1, 1, 0.2)
+        love.graphics.line(self.x + self.xOffset, self.y + self.yOffset, MOUSE_X, MOUSE_Y)
+    end
     -- love.graphics.circle("line", self.x + self.xOffset, self.y + self.yOffset - 16, self.xOffset)
 
     if FIREBALLS_ACTIVE == true then
-        love.graphics.setColor(1, 1, 1, 255)
+        love.graphics.setColor(1, 1, 1, 1)
         love.graphics.draw(self.items.potion_spritesheet, self.items.potion_sprites[FIRE_POTION], self.map.camX + 20, self.map.camY + 20, 0, 2, 2)
         love.graphics.setFont(fancyfont)
-        love.graphics.setColor(0, 0, 0, 255)
+        love.graphics.setColor(0, 0, 0, 1)
         love.graphics.print(tostring(remaining_fireballs), self.map.camX + 36, self.map.camY + 44)
     elseif ICE_ACTIVE == true then
-        love.graphics.setColor(1, 1, 1, 255)        
+        love.graphics.setColor(1, 1, 1, 1)        
         love.graphics.draw(self.items.potion_spritesheet, self.items.potion_sprites[ICE_POTION], self.map.camX + 20, self.map.camY + 20, 0, 2, 2)
         love.graphics.setFont(fancyfont)
-        love.graphics.setColor(0, 0, 0, 255)
+        love.graphics.setColor(0, 0, 0, 1)
         love.graphics.print(string.format("%.1f", ice_timer), self.map.camX + 34, self.map.camY + 44)
     end
 
@@ -715,14 +718,16 @@ function Wizard:render()
     love.graphics.print("direction: " ..tostring(self.direction), self.map.camX + 20, self.map.camY + 200)
     love.graphics.print("active_direction " ..tostring(active_direction), self.map.camX + 20, self.map.camY + 210)
 
-    love.graphics.print("ICE_ACTIVE: " ..tostring(ICE_ACTIVE), self.map.camX + 20, self.map.camY + 280)
-    love.graphics.print("CASTING_FROST: " ..tostring(CASTING_FROST), self.map.camX + 20, self.map.camY + 290)
-    love.graphics.print("ice_timer: " ..string.format("%.2f", ice_timer), self.map.camX + 20, self.map.camY + 300)
-
     love.graphics.print("FIREBALLS_ACTIVE: " ..tostring(FIREBALLS_ACTIVE), self.map.camX + 20, self.map.camY + 230)
     love.graphics.print("remaining_fireballs: " ..tostring(remaining_fireballs), self.map.camX + 20, self.map.camY + 240)
     love.graphics.print("Fireball timer: " ..string.format("%.2f", fireball_timer), self.map.camX + 20, self.map.camY + 250)
     love.graphics.print("Fireball scale: " ..string.format(fireball_scale), self.map.camX + 20, self.map.camY + 260)
+
+    love.graphics.print("ICE_ACTIVE: " ..tostring(ICE_ACTIVE), self.map.camX + 20, self.map.camY + 280)
+    love.graphics.print("CASTING_FROST: " ..tostring(CASTING_FROST), self.map.camX + 20, self.map.camY + 290)
+    love.graphics.print("ice_timer: " ..string.format("%.2f", ice_timer), self.map.camX + 20, self.map.camY + 300)
+
+
 
 
 end

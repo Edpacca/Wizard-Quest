@@ -37,6 +37,8 @@ function Fireball:fireball_update(dt)
 
 end
 
+-- Credit to Jens Genburg for initial shooter mechanics 
+-- https://dev.to/jeansberg/make-a-shooter-in-lualove2d---part-2
 function Fireball:spawn_fireball(x, y, aim_x, aim_y, scale)
 
     fb_timer = 0
@@ -51,7 +53,8 @@ function Fireball:spawn_fireball(x, y, aim_x, aim_y, scale)
 
 end
 
-
+-- Credit to Jens Genburg for initial shooter mechanics 
+-- https://dev.to/jeansberg/make-a-shooter-in-lualove2d---part-2
 function Fireball:fireball_render()
     for i, new_fireball in ipairs(FIREBALLS) do
 

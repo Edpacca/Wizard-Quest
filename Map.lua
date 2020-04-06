@@ -1,43 +1,21 @@
 require 'Util'
 Map = Class{}
 
-DIRT = 1
-SQUARE = 2
-WALL = 4
-WALL_TORCH = 5
-WALL_WINDOW = 7
-PILLAR = 23
-
-TILE_EMPTY = 8
-
-ALCOVE_ORB_ON = 6
-ALCOVE_ORB_OFF = 24
-SQUARE_ORB_ON = 26
-SQUARE_ORB_OFF = 25
-
-FIRE_TILE_ON = 3
-FIRE_TILE_OFF = 20
-ICE_TILE_ON = 22
-ICE_TILE_OFF = 21
-
-PORTCULLIS = {}
-for i = 0, (19 * 2) do
-    PORTCULLIS[i] = i
-end
-
+-- Map tiles initialised in Map64 
 local SCROLL_SPEED = 300
 
 function Map:init()
 
-    self.spritesheet = love.graphics.newImage('master_graphics/Map/Map1_tilesheet_2.png')
+    self.spritesheet = love.graphics.newImage('master_graphics/Map/Map1_tilesheet3.png')
     self.sprites = generateQuads(self.spritesheet, 32, 32)
 
     self.tileWidth = 32
     self.tileHeight = 32
-    self.mapWidth = 61
-    self.mapHeight = 61
+    self.mapWidth = 62
+    self.mapHeight = 62
     self.tiles = {}
 
+    self.map64 = Map64(self)
     self.items = Items(self)
     self.wizard = Wizard(self)
 
@@ -76,34 +54,24 @@ function Map:init()
     self:draw_corridor(30, 2, 38, 6, DIRT)
     self:draw_corridor(18, 5, 29, 3, DIRT)
     self:draw_corridor(39, 5, 29, 3, DIRT)
-    self:draw_corridor(30, 2, 14, 7, DIRT)
-
-
-    self:setTile(30, 21, PORTCULLIS[8])
-    self:setTile(31, 21, PORTCULLIS[9])
-    self:setTile(30, 22, PORTCULLIS[27])
-    self:setTile(31, 22, PORTCULLIS[28])
+    self:draw_corridor(30, 2, 14, 9, DIRT)
 
     self:setTile(12, 30, FIRE_TILE_OFF)
     self:setTile(7, 30, FIRE_TILE_OFF)
     self:setTile(49, 30, ICE_TILE_OFF)
     self:setTile(54, 30, ICE_TILE_OFF)
 
-    -- x = 1
-    -- for y = 9, self.mapHeight do
-    --     if y == 11 or y == 13 or y == 15 then
-    --         self:setTile(x, y, ALCOVE_ORB_OFF)
-    --     else
-    --         self:setTile(x, y, WALL)
-    --     end
-    -- end
+    self:setTile(8, 27, ALCOVE_ORB_OFF_E)
+    self:setTile(8, 33, ALCOVE_ORB_OFF_E)
 
-    -- x = self.mapWidth
-    -- for y = 9, self.mapHeight do
-    --     self:setTile(x, y, WALL)
-        
-    -- end
-    
+    self:setTile(6, 30, ALCOVE_ORB_OFF_E)
+
+    self:setTile(12, 25, ALCOVE_ORB_OFF_S)
+    self:setTile(12, 35, ALCOVE_ORB_OFF_N)
+
+    self:setTile(47, 28, FLOOR_ORB_OFF)
+    self:setTile(49, 33, FLOOR_ORB_OFF)
+    self:setTile(51, 28, FLOOR_ORB_OFF)
 
 end
 
@@ -112,8 +80,8 @@ function Map:collides(tile)
     -- define our collidable tiles
     local collidables = {
         WALL, WALL_TORCH, WALL_WINDOW, 
-        ALCOVE_ORB_OFF, ALCOVE_ORB_ON, 
-        -- PILLAR, PORTCULLIS[27], PORTCULLIS[28]
+        ALCOVE_ORB_OFF_N, ALCOVE_ORB_OFF_S, ALCOVE_ORB_OFF_E, ALCOVE_ORB_OFF_W,
+        ALCOVE_ORB_ON_N, ALCOVE_ORB_ON_S, ALCOVE_ORB_ON_E, ALCOVE_ORB_ON_W, PILLAR,
     }
 
     -- iterate and return true if our tile type matches
@@ -130,12 +98,8 @@ function Map:update(dt)
     
     self.wizard:update(dt)
 
-    -- self.camX = math.max(0, math.min(self.wizard.x - VIRTUAL_WIDTH / 2,
-    --     math.min(self.mapWidthPixels - VIRTUAL_WIDTH, self.wizard.x)))
-    -- self.camY = self.wizard.y - VIRTUAL_HEIGHT / 2
     self.camX = self.wizard.x - VIRTUAL_WIDTH / 2
     self.camY = self.wizard.y - VIRTUAL_HEIGHT / 2
-
 
     MOUSE_X = love.mouse.getX() + map.camX
     MOUSE_Y = love.mouse.getY() + map.camY
@@ -197,6 +161,43 @@ function Map:draw_odd_circle(cenx, ceny, diameter, thickness, atile)
     end
 
 end
+
+function Map:draw_odder_circle(cenx, ceny, diameter, thickness, atile)
+
+    local wl = cenx - (thickness - 1)
+    local wu = cenx + (thickness - 1)
+    local xl = cenx - ((diameter - 1) / 2)
+    local xu = cenx + ((diameter - 1) / 2)
+    local xm1 = -1
+    local xm2 = 1
+    
+    local hl = ceny - ((diameter - 1) / 2)
+    local hu = ceny
+
+    for c = 1, 3 do
+            for y = hl, hu do
+                    for x = xl, xu do
+                        if x > wl and x < wu then
+                            self:setTile(x, y, atile)
+                        end
+                    end
+                wl = wl + xm1
+                wu = wu + xm2
+            end
+            
+        wl = cenx - ((diameter + 1) / 2)
+        wu = cenx + ((diameter + 1) / 2)
+        xl = cenx - ((diameter - 1) / 2)
+        xu = cenx + ((diameter - 1) / 2)
+        xm1 = 1
+        xm2 = -1
+        hl = ceny + 1
+        hu = ceny + ((diameter - 1) / 2)
+    end
+
+end
+
+
 
 -- cenx = 30
 -- ceny = 30
@@ -284,8 +285,8 @@ function Map:render()
         end
     end
 
-
     self.wizard:render()
     love.graphics.setColor(1, 1, 1, 1)
+    self.map64:render()
     love.graphics.draw(mouse_img, MOUSE_X - 3, MOUSE_Y - 3)
 end

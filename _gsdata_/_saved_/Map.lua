@@ -41,8 +41,6 @@ function Map:init()
     self.items = Items(self)
     self.wizard = Wizard(self)
 
-
-
     self.camX = 0
     self.camY = 0
 
@@ -90,6 +88,20 @@ function Map:init()
     self:setTile(7, 30, FIRE_TILE_OFF)
     self:setTile(49, 30, ICE_TILE_OFF)
     self:setTile(54, 30, ICE_TILE_OFF)
+
+    self:setTile(8, 27, ALCOVE_ORB_OFF)
+    self:setTile(8, 33, ALCOVE_ORB_OFF)
+
+    self:setTile(6, 30, ALCOVE_ORB_OFF)
+
+    self:setTile(12, 25, ALCOVE_ORB_OFF)
+    self:setTile(12, 35, ALCOVE_ORB_OFF)
+
+    self:setTile(47, 28, SQUARE_ORB_OFF)
+    self:setTile(49, 33, SQUARE_ORB_OFF)
+    self:setTile(51, 28, SQUARE_ORB_OFF)
+
+
 
     -- x = 1
     -- for y = 9, self.mapHeight do
@@ -288,6 +300,6 @@ function Map:render()
 
 
     self.wizard:render()
-    -- love.graphics.draw(map.mouse_img, love.mouse.getX(), love.mouse.getY())
-    love.graphics.draw(mouse_img, love.mouse.getX() + self.camX, love.mouse.getY() + self.camY)
+    love.graphics.setColor(1, 1, 1, 1)
+    love.graphics.draw(mouse_img, MOUSE_X - 3, MOUSE_Y - 3)
 end
