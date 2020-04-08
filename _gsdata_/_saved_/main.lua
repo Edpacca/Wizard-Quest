@@ -11,11 +11,13 @@ require 'Map64'
 require 'Map'
 require 'Wizard'
 
+SCALE = 2.5
+
 -- Screen window global variables / virtutal sizes enables easy scaling
 WINDOW_WIDTH = 1920
 WINDOW_HEIGHT = 1080
-VIRTUAL_WIDTH = WINDOW_WIDTH / 2.5
-VIRTUAL_HEIGHT = WINDOW_HEIGHT / 2.5
+VIRTUAL_WIDTH = WINDOW_WIDTH / SCALE
+VIRTUAL_HEIGHT = WINDOW_HEIGHT / SCALE
 
 
 love.graphics.setDefaultFilter('nearest', 'nearest')

@@ -60,6 +60,7 @@ end
 function Map64:collides(tile)
 
     local collidables = {
+        PORTCULLIS[1], PORTCULLIS[2], PORTCULLIS[3]
 
     }
 

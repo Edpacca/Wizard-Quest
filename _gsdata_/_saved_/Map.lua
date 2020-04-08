@@ -445,6 +445,6 @@ function Map:render()
         love.graphics.setColor(0, 0, 0, 1)
         love.graphics.print(string.format("%.1f", ice_timer), self.camX + 34, self.camY + 44)
     end
-
+    love.graphics.setColor(1, 1, 1, 1)
     love.graphics.draw(mouse_img, MOUSE_X - 3, MOUSE_Y - 3)
 end

@@ -34,22 +34,24 @@ function Fireball:fireball_update(dt)
 
         
         if map:fireball_interact(map:tileAt(FIREBALLS[i].nfb_x, FIREBALLS[i].nfb_y)) then
-            if map:tileAt(FIREBALLS[i].nfb_x, FIREBALLS[i].nfb_y).id == ALCOVE_ORB_OFF_E then
-                map:setTile(math.floor(FIREBALLS[i].nfb_x / 32) + 1,
-                math.floor(FIREBALLS[i].nfb_y / 32) + 1, ALCOVE_ORB_ON_E)
-                ACTIVE_FB_ORBS = ACTIVE_FB_ORBS + 1
-            elseif map:tileAt(FIREBALLS[i].nfb_x, FIREBALLS[i].nfb_y).id == ALCOVE_ORB_OFF_S then
-                map:setTile(math.floor(FIREBALLS[i].nfb_x / 32) + 1,
-                math.floor(FIREBALLS[i].nfb_y / 32) + 1, ALCOVE_ORB_ON_S)
-                ACTIVE_FB_ORBS = ACTIVE_FB_ORBS + 1
-            elseif map:tileAt(FIREBALLS[i].nfb_x, FIREBALLS[i].nfb_y).id == ALCOVE_ORB_OFF_N then
-                map:setTile(math.floor(FIREBALLS[i].nfb_x / 32) + 1,
-                math.floor(FIREBALLS[i].nfb_y / 32) + 1, ALCOVE_ORB_ON_N)
-                ACTIVE_FB_ORBS = ACTIVE_FB_ORBS + 1
-            elseif map:tileAt(FIREBALLS[i].nfb_x, FIREBALLS[i].nfb_y).id == ALCOVE_ORB_OFF_W then
-                map:setTile(math.floor(FIREBALLS[i].nfb_x / 32) + 1,
-                math.floor(FIREBALLS[i].nfb_y / 32) + 1, ALCOVE_ORB_ON_W)
-                ACTIVE_FB_ORBS = ACTIVE_FB_ORBS + 1
+            if ON_FIRE_TILE == true then
+                if map:tileAt(FIREBALLS[i].nfb_x, FIREBALLS[i].nfb_y).id == ALCOVE_ORB_OFF_E then
+                    map:setTile(math.floor(FIREBALLS[i].nfb_x / 32) + 1,
+                    math.floor(FIREBALLS[i].nfb_y / 32) + 1, ALCOVE_ORB_ON_E)
+                    ACTIVE_FB_ORBS = ACTIVE_FB_ORBS + 1
+                elseif map:tileAt(FIREBALLS[i].nfb_x, FIREBALLS[i].nfb_y).id == ALCOVE_ORB_OFF_S then
+                    map:setTile(math.floor(FIREBALLS[i].nfb_x / 32) + 1,
+                    math.floor(FIREBALLS[i].nfb_y / 32) + 1, ALCOVE_ORB_ON_S)
+                    ACTIVE_FB_ORBS = ACTIVE_FB_ORBS + 1
+                elseif map:tileAt(FIREBALLS[i].nfb_x, FIREBALLS[i].nfb_y).id == ALCOVE_ORB_OFF_N then
+                    map:setTile(math.floor(FIREBALLS[i].nfb_x / 32) + 1,
+                    math.floor(FIREBALLS[i].nfb_y / 32) + 1, ALCOVE_ORB_ON_N)
+                    ACTIVE_FB_ORBS = ACTIVE_FB_ORBS + 1
+                elseif map:tileAt(FIREBALLS[i].nfb_x, FIREBALLS[i].nfb_y).id == ALCOVE_ORB_OFF_W then
+                    map:setTile(math.floor(FIREBALLS[i].nfb_x / 32) + 1,
+                    math.floor(FIREBALLS[i].nfb_y / 32) + 1, ALCOVE_ORB_ON_W)
+                    ACTIVE_FB_ORBS = ACTIVE_FB_ORBS + 1
+                end
             elseif map:tileAt(FIREBALLS[i].nfb_x, FIREBALLS[i].nfb_y).id == WOOD_V then
                 map:setTile(math.floor(FIREBALLS[i].nfb_x / 32) + 1,
                 math.floor(FIREBALLS[i].nfb_y / 32) + 1, WOOD_V_BURNT)

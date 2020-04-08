@@ -21,6 +21,7 @@ TABLE3B = 46
 
 BLANK_FIRE = 20
 BLANK_ICE = 21
+BLANK_BOOK = 22
 
 
 
@@ -52,7 +53,12 @@ function Items:init(map)
     self:placeItem(TABLE2B, 30, 49, 19 + 19, 24, 0)
     self:placeItem(TABLE3B, 30, 49, 19 + 19 + 19, 24, 0)
 
-    self:placeTable(45, 32, 4, - 6)
+    self:placeItem(TABLE1A, 45, 32, 0, -6, 0)
+    self:placeItem(TABLE1B, 45, 32, 0, 24 - 6, 0)
+    self:placeItem(TABLE3A, 45, 32, 19, -6, 0)
+    self:placeItem(TABLE3B, 45, 32, 19, 24 - 6, 0)
+
+
     self:placeItem(BOOK2_CL, 45, 32, 6, -9, 0)
 
     self:placeItem(FIRE_POTION, 7, 30, 4, 6, 0)

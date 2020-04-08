@@ -62,9 +62,7 @@ function Fireball:fireball_update(dt)
             map:tileAt(FIREBALLS[i].nfb_x, FIREBALLS[i].nfb_y).id == WOOD_V_BURNT then
                 map:setTile(math.floor(FIREBALLS[i].nfb_x / 32) + 1,
                 math.floor(FIREBALLS[i].nfb_y / 32) + 1, DIRT)
-
             end
-
             table.remove(FIREBALLS, i)
         elseif map:collides(map:tileAt(FIREBALLS[i].nfb_x, FIREBALLS[i].nfb_y)) then
             table.remove(FIREBALLS, i)

@@ -1,0 +1,21 @@
+2020-04-08 23:55:13: == Rename Conflict Losing File is On, expect some weirdness in auto-resolving Vertical Conflicts
+2020-04-08 23:55:13: -- Analysis Started by On File Change First Full Analyze Upon File Monitoring Start
+2020-04-08 23:55:13: Do Not Propagate Deletions: 1-way deletions reverted: 1
+2020-04-08 23:55:13: Changes: 11, Conflicts: 0, CopyTime: 0, FixState: 0, Errors: 0, All: 44
+2020-04-08 23:55:13: Left to Right: Copy File: 11 
+2020-04-08 23:55:13: == Sync Started by On File Change First Full Analyze Upon File Monitoring Start
+2020-04-08 23:55:13: Copy Over 'C:/Users/eddie/OneDrive/Computer Science/Love2D Games/Wizard Quest/Wizard_Quest/Fireball.lua' -> 'C:/Users/eddie/OneDrive/Computer Science/Github/Wizard_Quest_git/Fireball.lua' (4,781)
+2020-04-08 23:55:13: Copy Over 'C:/Users/eddie/OneDrive/Computer Science/Love2D Games/Wizard Quest/Wizard_Quest/Frostray.lua' -> 'C:/Users/eddie/OneDrive/Computer Science/Github/Wizard_Quest_git/Frostray.lua' (2,870)
+2020-04-08 23:55:13: Copy Over 'C:/Users/eddie/OneDrive/Computer Science/Love2D Games/Wizard Quest/Wizard_Quest/Items.lua' -> 'C:/Users/eddie/OneDrive/Computer Science/Github/Wizard_Quest_git/Items.lua' (4,691)
+2020-04-08 23:55:13: Copy Over 'C:/Users/eddie/OneDrive/Computer Science/Love2D Games/Wizard Quest/Wizard_Quest/main.lua' -> 'C:/Users/eddie/OneDrive/Computer Science/Github/Wizard_Quest_git/main.lua' (2,788)
+2020-04-08 23:55:13: Copy Over 'C:/Users/eddie/OneDrive/Computer Science/Love2D Games/Wizard Quest/Wizard_Quest/Map.lua' -> 'C:/Users/eddie/OneDrive/Computer Science/Github/Wizard_Quest_git/Map.lua' (15,782)
+2020-04-08 23:55:13: Copy Over 'C:/Users/eddie/OneDrive/Computer Science/Love2D Games/Wizard Quest/Wizard_Quest/Map64.lua' -> 'C:/Users/eddie/OneDrive/Computer Science/Github/Wizard_Quest_git/Map64.lua' (1,651)
+2020-04-08 23:55:13: Copy New 'C:/Users/eddie/OneDrive/Computer Science/Love2D Games/Wizard Quest/Wizard_Quest/master_graphics/Map/glyph1.png' -> 'C:/Users/eddie/OneDrive/Computer Science/Github/Wizard_Quest_git/master_graphics/Map/glyph1.png' (192,521)
+2020-04-08 23:55:13: Copy New 'C:/Users/eddie/OneDrive/Computer Science/Love2D Games/Wizard Quest/Wizard_Quest/master_graphics/Map/glyph1_active.png' -> 'C:/Users/eddie/OneDrive/Computer Science/Github/Wizard_Quest_git/master_graphics/Map/glyph1_active.png' (937,838)
+2020-04-08 23:55:13: Copy New 'C:/Users/eddie/OneDrive/Computer Science/Love2D Games/Wizard Quest/Wizard_Quest/master_graphics/Map/glyph2.png' -> 'C:/Users/eddie/OneDrive/Computer Science/Github/Wizard_Quest_git/master_graphics/Map/glyph2.png' (250,567)
+2020-04-08 23:55:13: Copy New 'C:/Users/eddie/OneDrive/Computer Science/Love2D Games/Wizard Quest/Wizard_Quest/master_graphics/Map/glyph2_active.png' -> 'C:/Users/eddie/OneDrive/Computer Science/Github/Wizard_Quest_git/master_graphics/Map/glyph2_active.png' (985,184)
+2020-04-08 23:55:13: Copy Over 'C:/Users/eddie/OneDrive/Computer Science/Love2D Games/Wizard Quest/Wizard_Quest/Wizard.lua' -> 'C:/Users/eddie/OneDrive/Computer Science/Github/Wizard_Quest_git/Wizard.lua' (23,038)
+2020-04-08 23:55:13: == Sync Complete. Time: 00:00:00, Speed: 0.00/s, OK: 11, Errors: 0
+2020-04-08 23:55:13: On File Change Monitoring started on file:///~eddie/OneDrive/Computer Science/Love2D Games/Wizard Quest/Wizard_Quest
+2020-04-08 23:55:13: On File Change Monitoring started on file:///~eddie/OneDrive/Computer Science/Github/Wizard_Quest_git
+2020-04-08 23:55:13: 

@@ -52,7 +52,8 @@ function Items:init(map)
     self:placeItem(TABLE2B, 30, 49, 19 + 19, 24, 0)
     self:placeItem(TABLE3B, 30, 49, 19 + 19 + 19, 24, 0)
 
-    self:placeTable(15, 31, 4, 2)
+    self:placeTable(45, 32, 4, - 6)
+    self:placeItem(BOOK2_CL, 45, 32, 6, -9, 0)
 
     self:placeItem(FIRE_POTION, 7, 30, 4, 6, 0)
     self:placeItem(ICE_POTION, 54, 30, 4, 6, 0)
