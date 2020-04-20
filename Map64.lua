@@ -3,6 +3,7 @@ Map64 = Class{}
 TILE_EMPTY = 40
 
 DIRT = 1
+DIRT_COLLIDABLE = 39
 SQUARE = 21
 WALL = 4
 WALL_TORCH = 5
@@ -53,6 +54,7 @@ function Map64:init(map)
     tiles64 = {}
 
     self:set64Tile(30, 21, PORTCULLIS[1])
+    self:set64Tile(30, 14, PORTCULLIS[1])
 
 end
 
@@ -61,7 +63,6 @@ function Map64:collides(tile)
 
     local collidables = {
         PORTCULLIS[1], PORTCULLIS[2], PORTCULLIS[3]
-
     }
 
     for _, v in ipairs(collidables) do

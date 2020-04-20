@@ -5,7 +5,7 @@ ON_FIRE_TILE = false
 FIREBALLS_ACTIVE = false
 ICE_ACTIVE = false
 
-WALKING_SPEED = 350
+WALKING_SPEED = 150
 local active_direction = 's'
 local fireball_timer = 0
 local tick = 5
@@ -213,9 +213,6 @@ function Wizard:init(map)
                    self.state = 'casting_fire_charge'
                 end
             end
-
-
-
         end,
 
         ['casting_fire_charge'] = function(dt)
@@ -317,15 +314,8 @@ function Wizard:init(map)
             CASTING_FROST = true
             self.frostray:spawn_frostray(self.x + self.xOffset, self.y + self.yOffset, aim_x, aim_y)
 
-            -- if active_direction == 'd' then
-            --     self.dx = -15
-            -- elseif active_direction == 'a' then
-            --     self.dx = 15
-            -- elseif active_direction == 'w' then
-            --     self.dy = 15
-            -- elseif active_direction == 's' then
-            --     self.dy = -15
-            -- end
+
+
 
             self.animation = self.animations['casting_frost_release']
             ice_timer = ice_timer - dt
@@ -444,9 +434,9 @@ function Wizard:potion_mechanics()
 
                 end
             end
-        elseif item_id == BOOK1_CL then
-                    self.items:placeItem(BOOK1_L, 31, 49, 6, -3, 0)
-                    self.items:placeItem(BOOK1_R, 31, 49, 6 + 19, -3, 0)
+        -- elseif item_id == BOOK1_CL then
+        --             self.items:placeItem(BOOK1_L, 31, 49, 6, -3, 0)
+        --             self.items:placeItem(BOOK1_R, 31, 49, 6 + 19, -3, 0)
 
 
         end
@@ -565,6 +555,15 @@ function Wizard:target_tiles()
     else
         self.map:setTile(49, 30, ICE_TILE_OFF)
         ON_ICE_TILE = false
+    end
+
+    if self:check_specific_tile(31, 48) or self:check_specific_tile(32, 48) then
+
+        self.items:placeItem(BOOK1_L, 31, 49, 6, -3, 0)
+        self.items:placeItem(BOOK1_R, 31, 49, 6 + 19, -3, 0)
+    else
+
+        self.items:placeItem(BOOK1_CL, 31, 49, 6, -3, 0)
     end
 
 end
@@ -718,6 +717,12 @@ function Wizard:render()
     love.graphics.print("CASTING_FROST: " ..tostring(CASTING_FROST), self.map.camX + 20, self.map.camY + 290)
     love.graphics.print("ice_timer: " ..string.format("%.2f", ice_timer), self.map.camX + 20, self.map.camY + 300)
 
-    love.graphics.print("active orbs: " ..string.format(ACTIVE_FB_ORBS), self.map.camX + 20, self.map.camY + 320)
+    love.graphics.print("active orbs: " ..string.format(ACTIVE_FB_ORBS + ACTIVE_ICE_ORBS), self.map.camX + 20, self.map.camY + 320)
+
+    if ACTIVE_FB_ORBS + ACTIVE_ICE_ORBS > 10 then
+        love.graphics.setFont(fancyfont)
+        love.graphics.setColor(0, 0, 0, 1)
+        love.graphics.print("CLEVER WIZARD", self.x - 25, self.y - 20)
+    end
 
 end

@@ -11,7 +11,7 @@ require 'Map64'
 require 'Map'
 require 'Wizard'
 
-SCALE = 2.5
+SCALE = 1.2
 
 -- Screen window global variables / virtutal sizes enables easy scaling
 WINDOW_WIDTH = 1920
@@ -44,7 +44,7 @@ function love.load()
     love.keyboard.keysReleased = {}
 
     love.mouse.setVisible(false)
-    love.mouse.setRelativeMode(true)
+    love.mouse.setRelativeMode(false)
 
     
     mouse_img = love.graphics.newImage('master_graphics/Map/pointer.png')

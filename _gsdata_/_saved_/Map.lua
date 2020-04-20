@@ -7,6 +7,10 @@ local SCROLL_SPEED = 300
 function Map:init()
 
     self.vingette = love.graphics.newImage('master_graphics/Map/vingette.png')
+    self.glyph1 = love.graphics.newImage('master_graphics/Map/glyph1.png')
+    self.glyph1_active = love.graphics.newImage('master_graphics/Map/glyph1_active.png')
+    self.glyph2 = love.graphics.newImage('master_graphics/Map/glyph2.png')
+    self.glyph2_active = love.graphics.newImage('master_graphics/Map/glyph2_active.png')
     self.spritesheet = love.graphics.newImage('master_graphics/Map/Map1_tilesheet3.png')
     self.sprites = generateQuads(self.spritesheet, 32, 32)
 
@@ -101,9 +105,11 @@ function Map:tiling()
     self:setTile(54, 30, ICE_TILE_OFF)
     self:setTile(55, 30, WALL_TORCH)
 
-    self:setTile(47, 28, FLOOR_ORB_OFF)
+    self:setTile(47, 27, FLOOR_ORB_OFF)
     self:setTile(49, 33, FLOOR_ORB_OFF)
-    self:setTile(51, 28, FLOOR_ORB_OFF)
+    self:setTile(51, 27, FLOOR_ORB_OFF)
+    self:setTile(52, 31, FLOOR_ORB_OFF)
+    self:setTile(46, 31, FLOOR_ORB_OFF)
 
     self:setTile(49, 25, WALL_WINDOW)
     self:setTile(48, 25, WALL_TR)
@@ -218,7 +224,7 @@ function Map:collides(tile)
         WALL, WALL_TORCH, WALL_WINDOW, 
         ALCOVE_ORB_OFF_N, ALCOVE_ORB_OFF_S, ALCOVE_ORB_OFF_E, ALCOVE_ORB_OFF_W,
         ALCOVE_ORB_ON_N, ALCOVE_ORB_ON_S, ALCOVE_ORB_ON_E, ALCOVE_ORB_ON_W, PILLAR, 
-        WALL_BL, WALL_BR, WOOD_H, WOOD_V, WOOD_H_BURNT, WOOD_V_BURNT
+        -- WALL_BL, WALL_BR, WOOD_H, WOOD_V, WOOD_H_BURNT, WOOD_V_BURNT
     }
 
     -- iterate and return true if our tile type matches
@@ -236,6 +242,23 @@ function Map:fireball_interact(tile)
     -- define our collidable tiles
     local collidables = {
         ALCOVE_ORB_OFF_N, ALCOVE_ORB_OFF_S, ALCOVE_ORB_OFF_E, ALCOVE_ORB_OFF_W, WOOD_V, WOOD_H, WOOD_H_BURNT, WOOD_V_BURNT
+    }
+
+    -- iterate and return true if our tile type matches
+    for _, v in ipairs(collidables) do
+        if tile.id == v then
+            return true
+        end
+    end
+
+    return false
+end
+
+-- return whether a given tile is collidable
+function Map:frostray_interact(tile)
+    -- define our collidable tiles
+    local collidables = {
+        FLOOR_ORB_OFF
     }
 
     -- iterate and return true if our tile type matches
@@ -415,7 +438,7 @@ function Map:render()
 
 
 
-    self.wizard:render()
+
 
     -- for y = 1, self.mapHeight do
     --     for x = 1, self.mapWidth do
@@ -426,9 +449,41 @@ function Map:render()
     --     end
     -- end
 
+    love.graphics.setColor(1, 1, 1, 0.5)
+    if ACTIVE_FB_ORBS > 4 then
+        love.graphics.draw(self.glyph2_active, 478, 1052, 180 * (math.pi / 180), 0.22)
+    else
+        love.graphics.draw(self.glyph2, 478, 1052, 180 * (math.pi / 180), 0.22)
+    end
+
+    if ACTIVE_ICE_ORBS > 4 then
+        love.graphics.draw(self.glyph1_active, 1442, 835, 0, 0.22)
+    else
+        love.graphics.draw(self.glyph1, 1442, 835, 0, 0.22)
+    end
+
+    for i = 1, 5 do
+        if ACTIVE_FB_ORBS + ACTIVE_ICE_ORBS == 2 * i then
+            tiles64[1].tile64_id = PORTCULLIS[i+1]
+
+            if ACTIVE_FB_ORBS + ACTIVE_ICE_ORBS == 10 then
+                self:setTile(55, 30, ALCOVE_ORB_OFF_W)
+            end
+        end
+    end
+    
+
+
+
+
+    love.graphics.setColor(1, 1, 1, 1)
+    self.wizard:render()
+
     love.graphics.setColor(1, 1, 1, 1)
     self.items:render()
     self.map64:render()
+
+
 
     love.graphics.draw(self.vingette, self.camX, self.camY, 0, 1/SCALE)
 
