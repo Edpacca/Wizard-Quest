@@ -5,7 +5,7 @@ ON_FIRE_TILE = false
 FIREBALLS_ACTIVE = false
 ICE_ACTIVE = false
 
-WALKING_SPEED = 150
+WALKING_SPEED = 180
 local active_direction = 's'
 local fireball_timer = 0
 local tick = 5
@@ -14,8 +14,8 @@ check_tile = 0
 
 function Wizard:init(map)
 
-    self.y = map.tileWidth * 28
-    self.x = map.tileWidth * 45
+    self.x = map.tileWidth * SPAWNX
+    self.y = map.tileWidth * SPAWNY
 
     self.dx = 0
     self.dy = 0
@@ -114,6 +114,20 @@ function Wizard:init(map)
             },
             interval = 0.1
         }),
+        ['walking_up'] = Animation({
+            texture = self.texture,
+            frames = {
+                self.frames[16], self.frames[17]
+            },
+            interval = 0.1
+        }),
+        ['no_casting'] = Animation({
+            texture = self.texture,
+            frames = {
+                self.frames[4], self.frames[4], self.frames[13], self.frames[14], self.frames[13], self.frames[15], self.frames[15]
+            },
+            interval = 0.3
+        }),
         ['casting_fire_charge'] = Animation({
             texture = self.texture,
             frames = {
@@ -164,7 +178,7 @@ function Wizard:init(map)
             end
 
             if love.keyboard.wasPressed('space') then
-                self.state = 'casting_fire_charge'
+                self.state = 'no_casting'
             end
 
         end,
@@ -173,6 +187,7 @@ function Wizard:init(map)
 
             fireball_timer = 0
 
+            self.animations['no_casting']:restart()
             self.animations['casting_fire_charge']:restart()
             self.animation = self.animations['idle']
 
@@ -185,18 +200,25 @@ function Wizard:init(map)
                     self.dx = 0
                     self.dy = 0
                     self.state = 'casting_frost_release'
+                elseif FIREBALLS_ACTIVE == true then
+                    self.state = 'casting_fire_charge'
                 else
-                   self.state = 'casting_fire_charge'
+                    self.state = 'no_casting'
                 end
             end
 
         end,
 
         ['walking'] = function(dt)
+            sounds['firecharge']:stop ()
 
             fireball_timer = 0
 
-            self.animation = self.animations['walking']
+            if active_direction == 'w' or self.dy < 0 then
+                self.animation = self.animations['walking_up']
+            else
+                self.animation = self.animations['walking']
+            end
 
             if not self:movement_func() then
                 self.dx = 0
@@ -209,11 +231,36 @@ function Wizard:init(map)
                     self.dx = 0
                     self.dy = 0
                     self.state = 'casting_frost_release'
+                elseif FIREBALLS_ACTIVE == true then
+                    self.state = 'casting_fire_charge'
                 else
-                   self.state = 'casting_fire_charge'
+                    self.state = 'no_casting'
                 end
             end
         end,
+
+        ['no_casting'] = function(dt)
+            self.dx = 0
+            self.dy = 0
+            fireball_timer = fireball_timer + dt * tick
+
+            self.animation = self.animations['no_casting']
+            if fireball_timer > 3 and fireball_timer < 5 then
+                sounds['nocast']:play()
+            elseif fireball_timer > 7 then
+                sounds['wiz_nocast']:play()  
+            end            
+
+            if love.keyboard.wasReleased('space') then
+                self.state = 'idle'
+            elseif self:movement_func() then
+                self.state = 'walking'
+            elseif fireball_timer > 10 then
+
+                self.state = 'idle'
+            end
+        end,
+
 
         ['casting_fire_charge'] = function(dt)
 
@@ -222,18 +269,18 @@ function Wizard:init(map)
             self.dx = 0
             self.dy = 0                       
             self.animation = self.animations['casting_fire_charge']
+            sounds['firecharge']:play()
     
             if love.keyboard.wasReleased('space') then
+                sounds['firecharge']:stop ()
                 self.state = 'idle'       
-            elseif fireball_timer >= 6 and FIREBALLS_ACTIVE == true then
-                
+            elseif fireball_timer >= 6 and FIREBALLS_ACTIVE == true then  
                 self.state = 'casting_fire_high'
-
             elseif fireball_timer >= 1 and FIREBALLS_ACTIVE == false then
-
+                sounds['firecharge']:stop ()
                 self.state = 'idle'
-
             elseif self:movement_func() then
+                sounds['firecharge']:stop ()
                 self.state = 'walking'
             end
 
@@ -245,14 +292,17 @@ function Wizard:init(map)
             fireball_scale = 1
             FIREBALL_SPEED = SMALL_FIREBALL_SPEED
             fireball_timer = fireball_timer + dt * tick
+            sounds['firecharge']:play()
 
             self.animation = self.animations['casting_fire_high']
 
             if love.keyboard.wasReleased('space') then
+                sounds['firecharge']:stop ()
                 self.state = 'casting_fireball'
-            elseif fireball_timer >= 12 then
+            elseif fireball_timer >= 12 and remaining_fireballs >= 3 then
                 self.state = 'casting_fire_peak'
-            elseif self:movement_func() then
+            elseif self:movement_func() or fireball_timer >= 12 then
+                sounds['firecharge']:stop ()
                 self.state = 'walking'
             end        
         end,
@@ -263,17 +313,23 @@ function Wizard:init(map)
             fireball_scale = 2
             FIREBALL_SPEED = BIG_FIREBALL_SPEED
             fireball_timer = fireball_timer + dt * tick
+            sounds['firecharge']:stop ()
+            sounds['firecharge_big']:play()
             
             self.animation = self.animations['casting_fire_peak']
 
-            if love.keyboard.wasReleased('space') then 
+            if love.keyboard.wasReleased('space') then
+                sounds['firecharge_big']:stop ()
                 self.state = 'casting_fireball'
             elseif self:movement_func() then
+                sounds['firecharge_big']:stop ()
                 self.state = 'walking'
             end
         end,
 
         ['casting_fireball'] = function(dt)
+
+            sounds['wiz_cast']:play()  
 
             fireball_timer = 0
 
@@ -282,7 +338,7 @@ function Wizard:init(map)
 
             self.fireball:spawn_fireball(self.x + self.xOffset, self.y + self.yOffset, aim_x, aim_y, fireball_scale)
             remaining_fireballs = remaining_fireballs - fireball_usage
-
+            sounds['fireball']:play()
             self.state = 'casting_fire_release'
         end,
 
@@ -292,6 +348,7 @@ function Wizard:init(map)
             self.animation = self.animations['casting_fire_release']
 
             if remaining_fireballs < 1 then
+                sounds['potion_gone']:play()
                 FIREBALLS_ACTIVE = false
                 for i, v in ipairs(Map_items) do
                     if v.item == BLANK_FIRE then
@@ -309,26 +366,29 @@ function Wizard:init(map)
         end,
         ['casting_frost_release'] = function(dt)
 
+            sounds['frostray']:play()
+
             local aim_x = MOUSE_X
             local aim_y = MOUSE_Y
             CASTING_FROST = true
             self.frostray:spawn_frostray(self.x + self.xOffset, self.y + self.yOffset, aim_x, aim_y)
 
-
-
-
             self.animation = self.animations['casting_frost_release']
             ice_timer = ice_timer - dt
         
             if love.keyboard.wasReleased('space') then
+                sounds['frostray']:stop()
                 CASTING_FROST = false
                 self.dx = 0
                 self.dy = 0
                 self.state = 'idle'     
             elseif self:movement_func() then
+                sounds['frostray']:stop()
                 CASTING_FROST = false
                 self.state = 'walking'
             elseif ice_timer < 0 then
+                sounds['frostray']:stop()
+                sounds['potion_gone']:play()
                 CASTING_FROST = false
                 ICE_ACTIVE = false
                 for i, v in ipairs(Map_items) do
@@ -386,7 +446,7 @@ function Wizard:movement_func()
     -- calculates movements relative to the new NORTH, essentially enables diagonal movement
 
         self.state = 'walking'
-            self.animation = self.animations['walking']
+            -- self.animation = self.animations['walking']
             self.direction = active_direction
 
             -- moving NORTH WEST
@@ -410,19 +470,22 @@ function Wizard:movement_func()
 end
 
 function Wizard:potion_mechanics()
+
     if self:check_item_interactions(interact_item_rectangles) then
         if item_id == FIRE_POTION and FIREBALLS_ACTIVE == false then
+            sounds['potion_grab']:play()
             FIREBALLS_ACTIVE = true
             ICE_ACTIVE = false
             remaining_fireballs = 10
             for i, v in ipairs(Map_items) do
                 if v.item == FIRE_POTION then
-                    v.item = BLANK_FIRE
+                        v.item = BLANK_FIRE
                 elseif v.item == BLANK_ICE then
                     v.item = ICE_POTION
                 end
             end 
         elseif item_id == ICE_POTION and ICE_ACTIVE == false then
+            sounds['potion_grab']:play()
             FIREBALLS_ACTIVE = false
             ICE_ACTIVE = true
             ice_timer = 7
@@ -431,13 +494,8 @@ function Wizard:potion_mechanics()
                     v.item = BLANK_ICE
                 elseif v.item == BLANK_FIRE then
                     v.item = FIRE_POTION
-
                 end
             end
-        -- elseif item_id == BOOK1_CL then
-        --             self.items:placeItem(BOOK1_L, 31, 49, 6, -3, 0)
-        --             self.items:placeItem(BOOK1_R, 31, 49, 6 + 19, -3, 0)
-
 
         end
     end
@@ -459,7 +517,13 @@ function Wizard:check_U_collision()
 
         if self.map:collides(self.map:tileAt(self.x, self.y - 1)) or
             self.map:collides(self.map:tileAt(self.x + self.width - 1, self.y - 1)) then
-           
+
+                if self.map:collide_noise(self.map:tileAt(self.x, self.y - 1)) or
+                self.map:collide_noise(self.map:tileAt(self.x + self.width - 1, self.y - 1)) then
+                    sounds['knock']:play()
+                end
+
+            sounds['wiz_hit1']:play()                 
             self.dy = 0
             self.y = self.map:tileAt(self.x, self.y - 1).y * self.map.tileHeight
 
@@ -474,6 +538,12 @@ function Wizard:check_D_collision()
         if self.map:collides(self.map:tileAt(self.x, self.y1)) or
         self.map:collides(self.map:tileAt(self.x + self.width - 1, self.y1)) then
 
+            if self.map:collide_noise(self.map:tileAt(self.x, self.y1)) or
+            self.map:collide_noise(self.map:tileAt(self.x + self.width - 1, self.y1)) then
+                sounds['knock']:play()
+            end
+
+        sounds['wiz_hit1']:play()           
         self.dy = 0
         self.y = (self.map:tileAt(self.x, self.y1).y - 1) * self.map.tileHeight - self.height
 
@@ -487,7 +557,13 @@ function Wizard:check_L_collision()
 
         if self.map:collides(self.map:tileAt(self.x - 1, self.y)) or
             self.map:collides(self.map:tileAt(self.x - 1, self.y + self.height - 1)) then
-           
+
+                if self.map:collide_noise(self.map:tileAt(self.x - 1, self.y)) or
+                self.map:collide_noise(self.map:tileAt(self.x - 1, self.y + self.height - 1)) then
+                    sounds['knock']:play()
+                end
+
+            sounds['wiz_hit2']:play()            
             self.dx = 0
             self.x = self.map:tileAt(self.x - 1, self.y).x * self.map.tileWidth
 
@@ -502,6 +578,12 @@ function Wizard:check_R_collision()
         if self.map:collides(self.map:tileAt(self.x1, self.y)) or
         self.map:collides(self.map:tileAt(self.x1, self.y + self.height - 1)) then
 
+            if self.map:collide_noise(self.map:tileAt(self.x1, self.y)) or
+            self.map:collide_noise(self.map:tileAt(self.x1, self.y + self.height - 1)) then
+                sounds['knock']:play()
+            end
+        
+        sounds['wiz_hit2']:play()
         self.dx = 0
         self.x = (self.map:tileAt(self.x1, self.y).x - 1) * self.map.tileWidth - self.width
 
@@ -540,31 +622,160 @@ function Wizard:target_tiles()
     if self:check_specific_tile(12, 30) and FIREBALLS_ACTIVE == true then
 
         self.map:setTile(12, 30, FIRE_TILE_ON)
+        if ON_FIRE_TILE == false then
+            sounds['tile1']:play()
+        end
+
         ON_FIRE_TILE = true
         
     else
+        
         self.map:setTile(12, 30, FIRE_TILE_OFF)
+        if ON_FIRE_TILE == true then
+            sounds['tile2']:play()
+        end
         ON_FIRE_TILE = false
+
     end
 
+    -- Ice tile highlighting
     if self:check_specific_tile(49, 30) and ICE_ACTIVE == true then
 
         self.map:setTile(49, 30, ICE_TILE_ON)
-        ON_ICE_TILE = true
-        
+        if ON_ICE_TILE == false then
+            sounds['tile1']:play()
+        end
+        ON_ICE_TILE = true  
+
     else
+
         self.map:setTile(49, 30, ICE_TILE_OFF)
+        if ON_ICE_TILE == true then
+            sounds['tile2']:play()
+        end
         ON_ICE_TILE = false
+
     end
 
+    -- BOOK1 Firepotion bottom chamber
     if self:check_specific_tile(31, 48) or self:check_specific_tile(32, 48) then
 
-        self.items:placeItem(BOOK1_L, 31, 49, 6, -3, 0)
-        self.items:placeItem(BOOK1_R, 31, 49, 6 + 19, -3, 0)
-    else
+        for i, v in ipairs(Map_items) do
+            if v.unique_id == firebook_bottom then
+                v.item = BLANK_BOOK
+            end
+            if v.unique_id == book_open_bottom_L then
+                v.item = BOOK1_L
+            end
+            if v.unique_id == book_open_bottom_R then
+                v.item = BOOK1_R
+            end
+        end
+        if IS_READING_BOOK[1] == false then
+            sounds['scroll']:play()
+        end
 
-        self.items:placeItem(BOOK1_CL, 31, 49, 6, -3, 0)
+        IS_READING_BOOK[1] = true
+
+
+    elseif IS_READING_BOOK[1] == true and not (self:check_specific_tile(31, 48) or self:check_specific_tile(32, 48)) then
+
+        sounds['wiz_ooh'..tostring(math.random(1,2))]:play()
+
+        for i, v in ipairs(Map_items) do
+            if v.unique_id == firebook_bottom then
+                v.item = BOOK1_CL
+            end
+            if v.unique_id == book_open_bottom_L then
+                v.item = BLANK_BOOK
+            end
+            if v.unique_id == book_open_bottom_R then
+                v.item = BLANK_BOOK
+            end
+        end
+
+        IS_READING_BOOK[1] = false
+
     end
+
+    -- BOOK2 Icepotion right chamber
+    if self:check_specific_tile(45, 31) or self:check_specific_tile(46, 31) then
+
+        for i, v in ipairs(Map_items) do
+            if v.unique_id == icebook_right then
+                v.item = BLANK_BOOK
+            end
+            if v.unique_id == book_open_right_L then
+                v.item = BOOK2_L
+            end
+            if v.unique_id == book_open_right_R then
+                v.item = BOOK2_R
+            end
+        end
+        if IS_READING_BOOK[2] == false then
+            sounds['scroll']:play()
+        end
+        IS_READING_BOOK[2] = true
+
+    elseif IS_READING_BOOK[2] == true and not (self:check_specific_tile(45, 31) or self:check_specific_tile(46, 31)) then
+
+        sounds['wiz_ooh'..tostring(math.random(1,2))]:play()
+
+        for i, v in ipairs(Map_items) do
+            if v.unique_id == icebook_right then
+                v.item = BOOK2_CL
+            end
+            if v.unique_id == book_open_right_L then
+                v.item = BLANK_BOOK
+            end
+            if v.unique_id == book_open_right_R then
+                v.item = BLANK_BOOK
+            end
+        end
+
+        IS_READING_BOOK[2] = false
+    end
+
+    -- BOOK3 middle chamber
+    if self:check_specific_tile(28, 35) then
+
+        for i, v in ipairs(Map_items) do
+            if v.unique_id == middlebook then
+                v.item = BLANK_BOOK
+            end
+            if v.unique_id == middlebook_open_L then
+                v.item = BOOK3_L
+            end
+            if v.unique_id == middlebook_open_R then
+                v.item = BOOK3_R
+            end
+        end
+        if IS_READING_BOOK[3] == false then
+
+            sounds['scroll']:play()
+        end
+        IS_READING_BOOK[3] = true
+
+    elseif IS_READING_BOOK[3] == true and not (self:check_specific_tile(28,35)) then
+
+        sounds['wiz_ooh'..tostring(math.random(1,2))]:play()
+
+        for i, v in ipairs(Map_items) do
+            if v.unique_id == middlebook then
+                v.item = BOOK3_CL
+            end
+            if v.unique_id == middlebook_open_L then
+                v.item = BLANK_BOOK
+            end
+            if v.unique_id == middlebook_open_R then
+                v.item = BLANK_BOOK
+            end
+        end
+
+        IS_READING_BOOK[3] = false
+    end
+
+
 
 end
 
@@ -594,6 +805,7 @@ function Wizard:check_item_interactions(interaction_table)
         self:check_item_Down_collision(interaction_table) or
         self:check_item_Left_collision(interaction_table) or
         self:check_item_Right_collision(interaction_table) then
+        sounds['knock']:play()
         return true
     else 
         return false
@@ -688,6 +900,8 @@ function Wizard:render()
         love.graphics.setColor(1, 1, 1, 1)
         self.frostray:frostray_render(self.x + self.xOffset, self.y + (self.yOffset - 16))
     end
+
+    -- Debugging info ------------------------------------------------------------------------------------------------------------
     love.graphics.setFont(defaultfont)
     love.graphics.setColor(0, 0, 0, 1)
     love.graphics.print("x: " ..string.format("%.0f", self.x), self.map.camX + 20, self.map.camY + 70)
@@ -718,6 +932,7 @@ function Wizard:render()
     love.graphics.print("ice_timer: " ..string.format("%.2f", ice_timer), self.map.camX + 20, self.map.camY + 300)
 
     love.graphics.print("active orbs: " ..string.format(ACTIVE_FB_ORBS + ACTIVE_ICE_ORBS), self.map.camX + 20, self.map.camY + 320)
+    ----------------------------------------------------------------------------------------------------------------------------------
 
     if ACTIVE_FB_ORBS + ACTIVE_ICE_ORBS > 10 then
         love.graphics.setFont(fancyfont)

@@ -26,15 +26,31 @@ function Frostray:frostray_update(dt)
     self.frost_animation:update(dt)
     self.currentFrame = self.frost_animation:getCurrentFrame()
 
-    if CASTING_FROST == true and ON_ICE_TILE == true then
+    if CASTING_FROST == true then
+    
+        if ON_ICE_TILE == true then
 
-        if map:tileAt(frostray_path_x, frostray_path_y).id == FLOOR_ORB_OFF then
-            ice_hit_timer = ice_hit_timer + dt
-            if ice_hit_timer > 1.1 then
-                ACTIVE_ICE_ORBS = ACTIVE_ICE_ORBS + 1
-                map:setTile(math.floor(frostray_path_x / 32) + 1, math.floor(frostray_path_y / 32) + 1, FLOOR_ORB_ON)
-                ice_hit_timer = 0
+            if map:tileAt(frostray_path_x, frostray_path_y).id == FLOOR_ORB_OFF then
+                ice_hit_timer = ice_hit_timer + dt
+                if ice_hit_timer > 1.1 then
+                    ACTIVE_ICE_ORBS = ACTIVE_ICE_ORBS + 1
+                    map:setTile(math.floor(frostray_path_x / 32) + 1, math.floor(frostray_path_y / 32) + 1, FLOOR_ORB_ON)
+                    ice_hit_timer = 0
+                    sounds['orb'..tostring(math.random(1,5))]:play()
+                    map:open_portcullis()
+                    if ACTIVE_ICE_ORBS == 5 then
+                        sounds['magic_swoosh']:play()
+                    end
+                end
             end
+        end
+
+        if map:tileAt(frostray_path_x, frostray_path_y).id == WOOD_H or map:tileAt(frostray_path_x, frostray_path_y).id == WOOD_H_BURNT then
+            sounds['knock']:play()
+            map:setTile(math.floor(frostray_path_x / 32) + 1, math.floor(frostray_path_y / 32) + 1, WOOD_H_FROZEN)
+        elseif map:tileAt(frostray_path_x, frostray_path_y).id == WOOD_V or map:tileAt(frostray_path_x, frostray_path_y).id == WOOD_V_BURNT then
+            sounds['knock']:play()
+            map:setTile(math.floor(frostray_path_x / 32) + 1, math.floor(frostray_path_y / 32) + 1, WOOD_V_FROZEN)
         end
     end
 end
@@ -71,7 +87,7 @@ function Frostray:frostray_render(x_frost, y_frost)
     love.graphics.setColor(0, 0, 0, 255)
     love.graphics.setFont(defaultfont)
     love.graphics.print("ray angle " ..tostring(angle * (180/math.pi)), map.camX + 20, map.camY + 330)
-    -- love.graphics.print("y_frost: " ..tostring(y_frost), map.camX + 20, map.camY + 340)
+    love.graphics.print("y_frost: " ..tostring(y_frost), map.camX + 20, map.camY + 340)
 
     love.graphics.print("tile_x: " ..tostring(math.floor(frostray_path_x / 32) + 1), map.camX + 20, map.camY + 360)
     love.graphics.print("tile_y: " ..tostring(math.floor(frostray_path_y / 32) + 1), map.camX + 20, map.camY + 370)

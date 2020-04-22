@@ -4,40 +4,33 @@ Map = Class{}
 -- Map tiles initialised in Map64 
 local SCROLL_SPEED = 300
 
-
 function Map:init()
+
+    self.camX = 0
+    self.camY = 0
+    self.tileWidth = 32
+    self.tileHeight = 32
+    self.mapWidth = 62
+    self.mapHeight = 62
+    self.tiles = {}
+    self.mapWidthPixels = self.mapWidth * self.tileWidth
+    self.mapHeightPixels = self.mapHeight * self.tileHeight
 
     self.spritesheet = love.graphics.newImage('master_graphics/Map/Map1_tilesheet3.png')
     self.sprites = generateQuads(self.spritesheet, 32, 32)
-
     self.scroll_spritesheet = love.graphics.newImage('master_graphics/Map/Scroll64.png')
     self.scrolls = generateQuads(self.scroll_spritesheet, 64, 64)
-
-
     self.glyph1 = love.graphics.newImage('master_graphics/Map/glyph1.png')
     self.glyph1_active = love.graphics.newImage('master_graphics/Map/glyph1_active.png')
     self.glyph2 = love.graphics.newImage('master_graphics/Map/glyph2.png')
     self.glyph2_active = love.graphics.newImage('master_graphics/Map/glyph2_active.png')
     self.glyph3 = love.graphics.newImage('master_graphics/Map/glyph3.png')
     self.glyph3_active = love.graphics.newImage('master_graphics/Map/glyph3_active.png')
-
     self.vingette = love.graphics.newImage('master_graphics/Map/vingette.png')
-
-    self.tileWidth = 32
-    self.tileHeight = 32
-    self.mapWidth = 62
-    self.mapHeight = 62
-    self.tiles = {}
 
     self.map64 = Map64(self)
     self.items = Items(self)
     self.wizard = Wizard(self)
-
-    self.camX = 0
-    self.camY = 0
-
-    self.mapWidthPixels = self.mapWidth * self.tileWidth
-    self.mapHeightPixels = self.mapHeight * self.tileHeight
 
     self:tiling()
 
@@ -235,9 +228,8 @@ function Map:tiling()
 
 end
 
--- return whether a given tile is collidable
 function Map:collides(tile)
-    -- define our collidable tiles
+
     local collidables = {
         WALL, WALL_TORCH, WALL_WINDOW, 
         ALCOVE_ORB_OFF_N, ALCOVE_ORB_OFF_S, ALCOVE_ORB_OFF_E, ALCOVE_ORB_OFF_W,
@@ -245,7 +237,6 @@ function Map:collides(tile)
         WALL_BL, WALL_BR, WOOD_H, WOOD_V, WOOD_H_BURNT, WOOD_V_BURNT, WOOD_H_FROZEN, WOOD_V_FROZEN, DIRT_COLLIDABLE, BOOKSHELF
     }
 
-    -- iterate and return true if our tile type matches
     for _, v in ipairs(collidables) do
         if tile.id == v then
             return true
@@ -253,15 +244,15 @@ function Map:collides(tile)
     end
 
     return false
+
 end
 
 function Map:collide_noise(tile)
-    -- define our collidable tiles
+
     local collidables = {
         WOOD_H, WOOD_V, WOOD_H_BURNT, WOOD_V_BURNT, WOOD_H_FROZEN, WOOD_V_FROZEN, BOOKSHELF
     }
 
-    -- iterate and return true if our tile type matches
     for _, v in ipairs(collidables) do
         if tile.id == v then
             return true
@@ -269,16 +260,15 @@ function Map:collide_noise(tile)
     end
 
     return false
+
 end
 
--- return whether a given tile is collidable
 function Map:fireball_interact(tile)
-    -- define our collidable tiles
+
     local collidables = {
         ALCOVE_ORB_OFF_N, ALCOVE_ORB_OFF_S, ALCOVE_ORB_OFF_E, ALCOVE_ORB_OFF_W, WOOD_V, WOOD_H, WOOD_H_BURNT, WOOD_V_BURNT, WOOD_H_FROZEN, WOOD_V_FROZEN
     }
 
-    -- iterate and return true if our tile type matches
     for _, v in ipairs(collidables) do
         if tile.id == v then
             return true
@@ -288,14 +278,13 @@ function Map:fireball_interact(tile)
     return false
 end
 
--- return whether a given tile is collidable
+
 function Map:frostray_interact(tile)
-    -- define our collidable tiles
+
     local collidables = {
         FLOOR_ORB_OFF
     }
 
-    -- iterate and return true if our tile type matches
     for _, v in ipairs(collidables) do
         if tile.id == v then
             return true
@@ -337,7 +326,6 @@ function Map:setTile(x, y, id)
     self.tiles[(y - 1) * self.mapWidth + x] = id
 end
 
-
 function Map:draw_odd_circle(cenx, ceny, diameter, thickness, atile)
 
     local wl = cenx - (thickness - 1)
@@ -372,7 +360,6 @@ function Map:draw_odd_circle(cenx, ceny, diameter, thickness, atile)
     end
 
 end
-
 
 -- cenx = 30
 -- ceny = 30
@@ -452,16 +439,19 @@ end
 
 function Map:open_portcullis()
     for i = 1, 5 do
+
         if ACTIVE_FB_ORBS + ACTIVE_ICE_ORBS == 2 * i  then
+
             tiles64[1].tile64_id = PORTCULLIS[i+1]
             sounds['portcullis']:play()
 
             if ACTIVE_FB_ORBS + ACTIVE_ICE_ORBS == 6 then
+
                 self:setTile(30, 22, DIRT)
                 self:setTile(31, 22, DIRT)
             
-            
             elseif ACTIVE_FB_ORBS + ACTIVE_ICE_ORBS == 10 then
+
                 self:setTile(30, 21, DIRT)
                 self:setTile(31, 21, DIRT)
                 self:setTile(55, 30, ALCOVE_ORB_OFF_W)
@@ -483,6 +473,7 @@ function Map:open_portcullis()
 end
 
 function Map:render()
+
     for y = 1, self.mapHeight do
         for x = 1, self.mapWidth do          
             local tile = self:getTile(x, y)
@@ -500,8 +491,6 @@ function Map:render()
         love.graphics.draw(self.spritesheet, self.sprites[PILLAR_2], (29 - 1) * self.tileWidth + 8, (y - 1) * self.tileHeight)
         love.graphics.draw(self.spritesheet, self.sprites[PILLAR_2], (32 - 1) * self.tileWidth - 8, (y - 1) * self.tileHeight)
     end
-
-
 
     -- for y = 1, self.mapHeight do
     --     for x = 1, self.mapWidth do
@@ -531,41 +520,33 @@ function Map:render()
         love.graphics.draw(self.glyph3, 735, 710, 0, 0.45)
     end
 
-
-    
-
-
-
-    love.graphics.setColor(1, 1, 1, 1)
     self.wizard:render()
-
-    love.graphics.setColor(1, 1, 1, 1)
-
     self.items:render()
     self.map64:render()
 
-
-
     love.graphics.draw(self.vingette, self.camX, self.camY, 0, 1/SCALE, 1/SCALE)
 
-    love.graphics.setColor(1, 1, 1, 1)
     if FIREBALLS_ACTIVE == true then
+
         love.graphics.setColor(1, 1, 1, 1)
         love.graphics.draw(self.items.potion_spritesheet, self.items.potion_sprites[FIRE_POTION], self.camX + 20, self.camY + 20, 0, 2, 2)
         love.graphics.setFont(fancyfont)
         love.graphics.setColor(0, 0, 0, 1)
         love.graphics.print(tostring(remaining_fireballs), self.camX + 36, self.camY + 44)
+
     elseif ICE_ACTIVE == true then
+        
         love.graphics.setColor(1, 1, 1, 1)        
         love.graphics.draw(self.items.potion_spritesheet, self.items.potion_sprites[ICE_POTION], self.camX + 20, self.camY + 20, 0, 2, 2)
         love.graphics.setFont(fancyfont)
         love.graphics.setColor(0, 0, 0, 1)
         love.graphics.print(string.format("%.1f", ice_timer), self.camX + 34, self.camY + 44)
-    end
 
+    end
 
     love.graphics.setFont(fancyfont)
     if IS_READING_BOOK[1] == true then
+
         love.graphics.setColor(1, 1, 1, 1)
         love.graphics.draw(self.scroll_spritesheet, self.scrolls[1], self.camX + 40, self.camY + 320)
         love.graphics.draw(self.scroll_spritesheet, self.scrolls[2], self.camX + 40 + 64, self.camY + 320)
@@ -576,7 +557,9 @@ function Map:render()
 
         love.graphics.setColor(0.1, 0.05, 0, 1)
         love.graphics.print(tostring(BOOK_TEXT[1]), self.camX + 60, self.camY + 327)
+
     elseif IS_READING_BOOK[2] == true then
+
         love.graphics.setColor(1, 1, 1, 1)
         love.graphics.draw(self.scroll_spritesheet, self.scrolls[1], self.camX + 40, self.camY + 320)
         love.graphics.draw(self.scroll_spritesheet, self.scrolls[2], self.camX + 40 + 64, self.camY + 320)
@@ -587,7 +570,9 @@ function Map:render()
 
         love.graphics.setColor(0.1, 0.05, 0, 1)
         love.graphics.print(tostring(BOOK_TEXT[2]), self.camX + 60, self.camY + 327)
+
     elseif IS_READING_BOOK[3] == true then
+
         love.graphics.setColor(1, 1, 1, 1)
         love.graphics.draw(self.scroll_spritesheet, self.scrolls[1], self.camX + 40, self.camY + 320)
         love.graphics.draw(self.scroll_spritesheet, self.scrolls[2], self.camX + 40 + 64, self.camY + 320)
@@ -603,4 +588,5 @@ function Map:render()
 
     love.graphics.setColor(1, 1, 1, 1)
     love.graphics.draw(mouse_img, MOUSE_X - 3, MOUSE_Y - 3)
+    
 end

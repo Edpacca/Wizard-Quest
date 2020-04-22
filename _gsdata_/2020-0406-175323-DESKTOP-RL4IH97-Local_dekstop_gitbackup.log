@@ -1,9 +1,0 @@
-2020-04-06 17:53:24: == Rename Conflict Losing File is On, expect some weirdness in auto-resolving Vertical Conflicts
-2020-04-06 17:53:24: -- Analysis Started by On File Change, 5 min passed but Changes keep on coming
-2020-04-06 17:53:24: Do Not Propagate Deletions: 1-way deletions reverted: 1
-2020-04-06 17:53:24: Changes: 1, Conflicts: 0, CopyTime: 0, FixState: 0, Errors: 0, All: 38
-2020-04-06 17:53:24: Left to Right: Copy File: 1 
-2020-04-06 17:53:24: == Sync Started by On File Change, 5 min passed but Changes keep on coming
-2020-04-06 17:53:24: Copy Over 'C:/Users/eddie/OneDrive/Computer Science/Love2D Games/Wizard Quest/Wizard_Quest/Map.lua' -> 'C:/Users/eddie/OneDrive/Computer Science/Github/Wizard_Quest_git/Map.lua' (10,035)
-2020-04-06 17:53:24: == Sync Complete. Time: 00:00:01, Speed: 0.00/s, OK: 1, Errors: 0
-2020-04-06 17:53:24: 

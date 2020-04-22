@@ -1,31 +1,5 @@
 Items = Class{}
 
-HEALTH_POTION = 1
-MANA_POTION = 2
-SPEED_POTION = 3   
-FIRE_POTION = 4
-ICE_POTION = 5
-BOOK1_L = 6
-BOOK1_R = 7
-BOOK1_CL = 8
-BOOK2_CL = 9
-BOOK2_L = 10
-BOOK2_R = 11
-BOOK3_L = 15
-BOOK3_R = 16
-BOOK3_CL = 17
-
-TABLE1A = 12
-TABLE2A = 13
-TABLE3A = 14
-TABLE1B = 44
-TABLE2B = 45
-TABLE3B = 46
-
-BLANK_FIRE = 20
-BLANK_ICE = 21
-BLANK_BOOK = 22
-
 IS_READING_BOOK = {}
 for i = 1, 4 do
     IS_READING_BOOK[i] = false
@@ -125,14 +99,14 @@ function Items:placeItem(item_id, tile_x, tile_y, fine_x, fine_y, rotation, uniq
 
 end
 
-function Items:placeTable(x, y, fx, fy)
+function Items:placeTable( tile_x, tile_y, fine_x, fine_y)
 
-    self:placeItem(TABLE1A, x, y, fx, fy, 0, tn)
-    self:placeItem(TABLE2A, x, y, fx + 19, fy, 0, tn)
-    self:placeItem(TABLE3A, x, y, fx + 19 + 19, fy, 0, tn)
-    self:placeItem(TABLE1B, x, y, fx, fy + 24, 0, tn)
-    self:placeItem(TABLE2B, x, y, fx + 19, fy + 24, 0, tn)
-    self:placeItem(TABLE3B, x, y, fx + 19 + 19, fy + 24, 0, tn)
+    self:placeItem(TABLE1A, tile_x, tile_y, fine_x, fine_y, 0, tn)
+    self:placeItem(TABLE2A, tile_x, tile_y, fine_x + 19, fine_y, 0, tn)
+    self:placeItem(TABLE3A, tile_x, tile_y, fine_x + 19 + 19, fine_y, 0, tn)
+    self:placeItem(TABLE1B, tile_x, tile_y, fine_x, fine_y + 24, 0, tn)
+    self:placeItem(TABLE2B, tile_x, tile_y, fine_x + 19, fine_y + 24, 0, tn)
+    self:placeItem(TABLE3B, tile_x, tile_y, fine_x + 19 + 19, fine_y + 24, 0, tn)
 
 end
 
@@ -141,32 +115,17 @@ function Items:generate_collide_rectangles(collidable_list, collidable_table)
     for i, v in ipairs(collidable_list) do
         for ii, vv in ipairs(Map_items) do
             if v == vv.item then
-                -- if v.item_angle == 0 then
+                -- if v.item_angle == 0 or if v.item_angle == 180 then
                 table.insert(collidable_table, {item_id = vv.item, col_x0 = vv.item_x, col_y0 = vv.item_y,
                                             col_x1 = vv.item_x + self.itemWidth, 
                                             col_y1 = vv.item_y + self.itemHeight})
-                -- elseif item_angle / (math.pi / 180) == 180 then
-                --     table.insert(item_rectangles, {col_x1 = v.item_x, col_y1 = v.item_y,
-                --                                 col_x0 = v.item_x + self.itemWidth, 
-                --                                 col_y0 = v.item_y + self.itemHeight})
-
-                -- elseif item_angle / (math.pi / 180) == 90 then
+                -- elseif item_angle / (math.pi / 180) == 90 or item_angle / (math.pi / 180) == 270 then
                 --     table.insert(item_rectangles, {col_x0 = v.item_x, col_y1 = v.item_y,
                 --                                 col_x1 = v.item_x + self.itemWidth, 
-                --                                 col_y0 = v.item_y + self.itemHeight})
-                -- elseif item_angle / (math.pi / 180) == 270 then
-                --     table.insert(item_rectangles, {col_x1 = v.item_x, col_y1 = v.item_y,
-                --                                 col_x0 = v.item_x + self.itemWidth, 
-                --                                 col_y0 = v.item_y + self.itemHeight})
-                
+                --                                 col_y0 = v.item_y + self.itemHeight})               
             end
         end
     end
-end
-
-
-function Items:update(dt)
-
 end
 
 function Items:render()

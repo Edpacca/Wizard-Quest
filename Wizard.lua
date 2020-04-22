@@ -1,16 +1,12 @@
 Wizard = Class{}
 
-ON_ICE_TILE = false
-ON_FIRE_TILE = false
-FIREBALLS_ACTIVE = false
-ICE_ACTIVE = false
-
 WALKING_SPEED = 180
+
 local active_direction = 's'
 local fireball_timer = 0
 local tick = 5
-
-check_tile = 0
+local x_scale = 1
+local x_pos_shift = 0
 
 function Wizard:init(map)
 
@@ -26,19 +22,17 @@ function Wizard:init(map)
     self.y1 = self.y + self.height
     self.x1 = self.x + self.width
 
+    self.state = 'startup'
+    self.direction = 's'
+    self.texture = love.graphics.newImage('master_graphics/Wizard_spritesheet.png')
+    self.frames = generateQuads(self.texture, 32, 32)
+    self.currentFrame = nil
+
     self.items = Items(self)
     self.fireball = Fireball(self)
     self.frostray = Frostray(self)
     self.map = map
  
-    
-    self.texture = love.graphics.newImage('master_graphics/Wizard_spritesheet.png')
-
-    self.state = 'startup'
-    self.direction = 's'
-    self.frames = generateQuads(self.texture, 32, 32)
-    self.currentFrame = nil
-    
     -- table of relative directions to whichever direction the wizard is facing (conisdered north)
     -- enables diagonal movement and unbiased key response
     self.movements = {
@@ -411,10 +405,8 @@ function Wizard:update(dt)
     self.fireball:fireball_update(dt)
     self.frostray:frostray_update(dt)
 
-
     self:check_map_tile_collisions()
     self:check_item_collisions()
-
     self:target_tiles()
     self:potion_mechanics()
         
@@ -472,23 +464,29 @@ end
 function Wizard:potion_mechanics()
 
     if self:check_item_interactions(interact_item_rectangles) then
+
         if item_id == FIRE_POTION and FIREBALLS_ACTIVE == false then
+
             sounds['potion_grab']:play()
             FIREBALLS_ACTIVE = true
             ICE_ACTIVE = false
             remaining_fireballs = 10
+
             for i, v in ipairs(Map_items) do
                 if v.item == FIRE_POTION then
                         v.item = BLANK_FIRE
                 elseif v.item == BLANK_ICE then
                     v.item = ICE_POTION
                 end
-            end 
+            end
+
         elseif item_id == ICE_POTION and ICE_ACTIVE == false then
+
             sounds['potion_grab']:play()
             FIREBALLS_ACTIVE = false
             ICE_ACTIVE = true
             ice_timer = 7
+
             for i, v in ipairs(Map_items) do
                 if v.item == ICE_POTION then
                     v.item = BLANK_ICE
@@ -504,15 +502,7 @@ end
 -- MAP COLLISIONS
 function Wizard:check_map_tile_collisions()
 
-    self:check_U_collision()
-    self:check_D_collision()
-    self:check_L_collision()
-    self:check_R_collision()
-
-end
-
-function Wizard:check_U_collision()
-    
+    -- UP collision
     if self.dy < 0 then
 
         if self.map:collides(self.map:tileAt(self.x, self.y - 1)) or
@@ -529,10 +519,8 @@ function Wizard:check_U_collision()
 
         end
     end
-end
 
-function Wizard:check_D_collision()
-    
+    -- DOWN collision
     if self.dy > 0 then
  
         if self.map:collides(self.map:tileAt(self.x, self.y1)) or
@@ -549,10 +537,8 @@ function Wizard:check_D_collision()
 
         end
     end
-end
 
-function Wizard:check_L_collision()
-    
+    -- LEFT collision
     if self.dx < 0 then
 
         if self.map:collides(self.map:tileAt(self.x - 1, self.y)) or
@@ -569,10 +555,8 @@ function Wizard:check_L_collision()
 
         end
     end
-end
 
-function Wizard:check_R_collision()
-    
+    -- RIGHT collision
     if self.dx > 0 then
  
         if self.map:collides(self.map:tileAt(self.x1, self.y)) or
@@ -589,7 +573,9 @@ function Wizard:check_R_collision()
 
         end
     end
+
 end
+
 
 -- MAP TILE INTERACTIONS
 function Wizard:check_on_tile_type(tile_type)
@@ -598,12 +584,11 @@ function Wizard:check_on_tile_type(tile_type)
         self.map:tileAt(self.x, self.y1).id == tile_type or      
         self.map:tileAt(self.x1, self.y).id == tile_type or      
         self.map:tileAt(self.x1, self.y1).id == tile_type then     
-            
         return true
-        
     else
         return false
     end
+
 end
 
 function Wizard:check_specific_tile(target_x, target_y)
@@ -622,6 +607,7 @@ function Wizard:target_tiles()
     if self:check_specific_tile(12, 30) and FIREBALLS_ACTIVE == true then
 
         self.map:setTile(12, 30, FIRE_TILE_ON)
+
         if ON_FIRE_TILE == false then
             sounds['tile1']:play()
         end
@@ -631,9 +617,11 @@ function Wizard:target_tiles()
     else
         
         self.map:setTile(12, 30, FIRE_TILE_OFF)
+
         if ON_FIRE_TILE == true then
             sounds['tile2']:play()
         end
+
         ON_FIRE_TILE = false
 
     end
@@ -642,143 +630,81 @@ function Wizard:target_tiles()
     if self:check_specific_tile(49, 30) and ICE_ACTIVE == true then
 
         self.map:setTile(49, 30, ICE_TILE_ON)
+
         if ON_ICE_TILE == false then
             sounds['tile1']:play()
         end
+
         ON_ICE_TILE = true  
 
     else
 
         self.map:setTile(49, 30, ICE_TILE_OFF)
+
         if ON_ICE_TILE == true then
             sounds['tile2']:play()
         end
+
         ON_ICE_TILE = false
 
     end
 
-    -- BOOK1 Firepotion bottom chamber
-    if self:check_specific_tile(31, 48) or self:check_specific_tile(32, 48) then
-
-        for i, v in ipairs(Map_items) do
-            if v.unique_id == firebook_bottom then
-                v.item = BLANK_BOOK
-            end
-            if v.unique_id == book_open_bottom_L then
-                v.item = BOOK1_L
-            end
-            if v.unique_id == book_open_bottom_R then
-                v.item = BOOK1_R
-            end
-        end
-        if IS_READING_BOOK[1] == false then
-            sounds['scroll']:play()
-        end
-
-        IS_READING_BOOK[1] = true
-
-
-    elseif IS_READING_BOOK[1] == true and not (self:check_specific_tile(31, 48) or self:check_specific_tile(32, 48)) then
-
-        sounds['wiz_ooh'..tostring(math.random(1,2))]:play()
-
-        for i, v in ipairs(Map_items) do
-            if v.unique_id == firebook_bottom then
-                v.item = BOOK1_CL
-            end
-            if v.unique_id == book_open_bottom_L then
-                v.item = BLANK_BOOK
-            end
-            if v.unique_id == book_open_bottom_R then
-                v.item = BLANK_BOOK
-            end
-        end
-
-        IS_READING_BOOK[1] = false
-
-    end
-
-    -- BOOK2 Icepotion right chamber
-    if self:check_specific_tile(45, 31) or self:check_specific_tile(46, 31) then
-
-        for i, v in ipairs(Map_items) do
-            if v.unique_id == icebook_right then
-                v.item = BLANK_BOOK
-            end
-            if v.unique_id == book_open_right_L then
-                v.item = BOOK2_L
-            end
-            if v.unique_id == book_open_right_R then
-                v.item = BOOK2_R
-            end
-        end
-        if IS_READING_BOOK[2] == false then
-            sounds['scroll']:play()
-        end
-        IS_READING_BOOK[2] = true
-
-    elseif IS_READING_BOOK[2] == true and not (self:check_specific_tile(45, 31) or self:check_specific_tile(46, 31)) then
-
-        sounds['wiz_ooh'..tostring(math.random(1,2))]:play()
-
-        for i, v in ipairs(Map_items) do
-            if v.unique_id == icebook_right then
-                v.item = BOOK2_CL
-            end
-            if v.unique_id == book_open_right_L then
-                v.item = BLANK_BOOK
-            end
-            if v.unique_id == book_open_right_R then
-                v.item = BLANK_BOOK
-            end
-        end
-
-        IS_READING_BOOK[2] = false
-    end
-
-    -- BOOK3 middle chamber
-    if self:check_specific_tile(28, 35) then
-
-        for i, v in ipairs(Map_items) do
-            if v.unique_id == middlebook then
-                v.item = BLANK_BOOK
-            end
-            if v.unique_id == middlebook_open_L then
-                v.item = BOOK3_L
-            end
-            if v.unique_id == middlebook_open_R then
-                v.item = BOOK3_R
-            end
-        end
-        if IS_READING_BOOK[3] == false then
-
-            sounds['scroll']:play()
-        end
-        IS_READING_BOOK[3] = true
-
-    elseif IS_READING_BOOK[3] == true and not (self:check_specific_tile(28,35)) then
-
-        sounds['wiz_ooh'..tostring(math.random(1,2))]:play()
-
-        for i, v in ipairs(Map_items) do
-            if v.unique_id == middlebook then
-                v.item = BOOK3_CL
-            end
-            if v.unique_id == middlebook_open_L then
-                v.item = BLANK_BOOK
-            end
-            if v.unique_id == middlebook_open_R then
-                v.item = BLANK_BOOK
-            end
-        end
-
-        IS_READING_BOOK[3] = false
-    end
-
-
+    self:instruction_book(31, 48, firebook_bottom, book_open_bottom_L, book_open_bottom_R, 1, BOOK1_CL, BOOK1_L, BOOK1_R)
+    self:instruction_book(45, 31, icebook_right, book_open_right_L, book_open_right_R, 2, BOOK2_CL, BOOK2_L, BOOK2_R)
+    self:instruction_book(27, 35, middlebook, middlebook_open_L, middlebook_open_R, 3, BOOK3_CL, BOOK3_L, BOOK3_R)
 
 end
 
+function Wizard:instruction_book(adj_tile_x, adj_tile_y, unique_book_id, unique_page_L_id, unique_page_R_id, book_number, book_texture, page_texture_L, page_texture_R) 
+
+        -- Open the book when standing on adjacent tiles
+        if self:check_specific_tile(adj_tile_x, adj_tile_y) or self:check_specific_tile(adj_tile_x + 1, adj_tile_y) then
+
+            for i, v in ipairs(Map_items) do
+
+                if v.unique_id == unique_book_id then
+                    v.item = BLANK_BOOK
+                end
+
+                if v.unique_id == unique_page_L_id then
+                    v.item = page_texture_L
+                end
+
+                if v.unique_id == unique_page_R_id then
+                    v.item = page_texture_R
+                end
+            end
+
+            if IS_READING_BOOK[book_number] == false then
+                sounds['scroll']:play()
+            end
+    
+            IS_READING_BOOK[book_number] = true
+
+        -- Close the book when leaving adjacent tiles
+        elseif IS_READING_BOOK[book_number] == true and not (self:check_specific_tile(adj_tile_x, adj_tile_y) or self:check_specific_tile(adj_tile_x + 1, adj_tile_y)) then
+    
+            sounds['wiz_ooh'..tostring(math.random(1,2))]:play()
+    
+            for i, v in ipairs(Map_items) do
+
+                if v.unique_id == unique_book_id then
+                    v.item = book_texture
+                end
+
+                if v.unique_id == unique_page_L_id then
+                    v.item = BLANK_BOOK
+                end
+
+                if v.unique_id == unique_page_R_id then
+                    v.item = BLANK_BOOK
+                end
+            end
+    
+            IS_READING_BOOK[book_number] = false
+    
+        end
+end
 
 -- ITEM COLLISIONS + INTERACTIONS
 function Wizard:check_item_collisions()
@@ -805,8 +731,10 @@ function Wizard:check_item_interactions(interaction_table)
         self:check_item_Down_collision(interaction_table) or
         self:check_item_Left_collision(interaction_table) or
         self:check_item_Right_collision(interaction_table) then
+
         sounds['knock']:play()
         return true
+
     else 
         return false
     end
@@ -817,14 +745,19 @@ function Wizard:check_item_Up_collision(collide_type_table)
     if self.dy < 0 then
 
         for i, v in ipairs(collide_type_table) do
+
             if self.x < v.col_x1 - 3 and self.x1 > v.col_x0 + 3 and self.y < v.col_y1 + 1 and self.y1 > v.col_y1  then
+
                 y_stop = v.col_y1
                 item_id = v.item_id
+
                 return y_stop, item_id, true
             end
         end
     end
+
     return false
+
 end
 
 function Wizard:check_item_Down_collision(collide_type_table)
@@ -832,14 +765,19 @@ function Wizard:check_item_Down_collision(collide_type_table)
     if self.dy > 0 then
 
         for i, v in ipairs(collide_type_table) do
+
             if self.x < v.col_x1 - 3 and self.x1 > v.col_x0 + 3 and self.y1 > v.col_y0 - 1 and self.y < v.col_y0 then
+
                 y_stop = v.col_y0 - self.height
                 item_id = v.item_id
+
                 return y_stop, item_id, true
             end
         end
     end
+
     return false
+
 end
 
 function Wizard:check_item_Left_collision(collide_type_table)
@@ -847,35 +785,47 @@ function Wizard:check_item_Left_collision(collide_type_table)
     if self.dx < 0 then
 
         for i, v in ipairs(collide_type_table) do
+
             if self.y < v.col_y1 - 3 and self.y1 > v.col_y0 + 3 and self.x < v.col_x1 + 1 and self.x1 > v.col_x1 then
+
                 x_stop = v.col_x1
                 item_id = v.item_id
+
                 return x_stop, item_id, true
             end
         end
     end
+
     return false
+
 end
 
 function Wizard:check_item_Right_collision(collide_type_table)
 
     if self.dx > 0 then
+
         for i, v in ipairs(collide_type_table) do
+
             if self.y < v.col_y1 - 3 and self.y1 > v.col_y0 + 3 and self.x1 > v.col_x0 - 1 and self.x < v.col_x0 then
+
                 x_stop = v.col_x0 - self.width
                 item_id = v.item_id
+
                 return x_stop, item_id, true
             end
         end
     end
-    return false
-end
 
-local x_scale = 1
-local x_pos_shift = 0
+    return false
+
+end
 
 function Wizard:render()
 
+    if love.mouse.isDown(2) then
+        love.graphics.setColor(1, 1, 1, 0.2)
+        love.graphics.line(self.x + self.xOffset, self.y + self.yOffset, MOUSE_X, MOUSE_Y)
+    end
 
     if MOUSE_X - self.x - self.xOffset > 0 then
         x_scale = -1
@@ -884,54 +834,46 @@ function Wizard:render()
         x_scale = 1
         x_pos_shift = 0
     end
-
-
         
     love.graphics.draw(self.texture, self.currentFrame, self.x + x_pos_shift, self.y, 0, x_scale, 1)
-    if love.mouse.isDown(2) then
-        love.graphics.setColor(1, 1, 1, 0.2)
-        love.graphics.line(self.x + self.xOffset, self.y + self.yOffset, MOUSE_X, MOUSE_Y)
-    end
 
-    love.graphics.setColor(1, 1, 1, 1)
     self.fireball:fireball_render()
-
     if CASTING_FROST == true then
         love.graphics.setColor(1, 1, 1, 1)
         self.frostray:frostray_render(self.x + self.xOffset, self.y + (self.yOffset - 16))
     end
 
     -- Debugging info ------------------------------------------------------------------------------------------------------------
-    love.graphics.setFont(defaultfont)
-    love.graphics.setColor(0, 0, 0, 1)
-    love.graphics.print("x: " ..string.format("%.0f", self.x), self.map.camX + 20, self.map.camY + 70)
-    love.graphics.print("y: " ..string.format("%.0f", self.y), self.map.camX + 20, self.map.camY + 80)
-    love.graphics.print("tile x: " ..string.format("%.1f", 1 + (self.x / map.tileWidth)), self.map.camX + 20, self.map.camY + 90)
-    love.graphics.print("tile y: " ..string.format("%.1f", 1 + (self.y / map.tileWidth)), self.map.camX + 20, self.map.camY + 100)
-    love.graphics.print("dx: " ..string.format("%.2f", self.dx), self.map.camX + 20, self.map.camY + 110)
-    love.graphics.print("dy: " ..string.format("%.2f", self.dy), self.map.camX + 20, self.map.camY + 120)
+    -- love.graphics.setFont(defaultfont)
+    -- love.graphics.setColor(0, 0, 0, 1)
+    -- love.graphics.print("x: " ..string.format("%.0f", self.x), self.map.camX + 20, self.map.camY + 70)
+    -- love.graphics.print("y: " ..string.format("%.0f", self.y), self.map.camX + 20, self.map.camY + 80)
+    -- love.graphics.print("tile x: " ..string.format("%.1f", 1 + (self.x / map.tileWidth)), self.map.camX + 20, self.map.camY + 90)
+    -- love.graphics.print("tile y: " ..string.format("%.1f", 1 + (self.y / map.tileWidth)), self.map.camX + 20, self.map.camY + 100)
+    -- love.graphics.print("dx: " ..string.format("%.2f", self.dx), self.map.camX + 20, self.map.camY + 110)
+    -- love.graphics.print("dy: " ..string.format("%.2f", self.dy), self.map.camX + 20, self.map.camY + 120)
 
 
-    love.graphics.print("mouse x: " ..string.format("%.2f", MOUSE_X), self.map.camX + 20, self.map.camY + 140)
-    love.graphics.print("mouse y: " ..string.format("%.2f", MOUSE_Y), self.map.camX + 20, self.map.camY + 150)
-    love.graphics.print("diff x: " ..string.format("%.2f", MOUSE_X - self.x - self.xOffset), self.map.camX + 20, self.map.camY + 160)
-    love.graphics.print("diff y: " ..string.format("%.2f", MOUSE_Y -self.y - self.yOffset), self.map.camX + 20, self.map.camY + 170)
-    love.graphics.print("angle: " ..string.format((180 / math.pi)*(math.atan((MOUSE_Y - self.y - self.yOffset)/(MOUSE_X - self.x - self.xOffset)))), self.map.camX + 20, self.map.camY + 180)
+    -- love.graphics.print("mouse x: " ..string.format("%.2f", MOUSE_X), self.map.camX + 20, self.map.camY + 140)
+    -- love.graphics.print("mouse y: " ..string.format("%.2f", MOUSE_Y), self.map.camX + 20, self.map.camY + 150)
+    -- love.graphics.print("diff x: " ..string.format("%.2f", MOUSE_X - self.x - self.xOffset), self.map.camX + 20, self.map.camY + 160)
+    -- love.graphics.print("diff y: " ..string.format("%.2f", MOUSE_Y -self.y - self.yOffset), self.map.camX + 20, self.map.camY + 170)
+    -- love.graphics.print("angle: " ..string.format((180 / math.pi)*(math.atan((MOUSE_Y - self.y - self.yOffset)/(MOUSE_X - self.x - self.xOffset)))), self.map.camX + 20, self.map.camY + 180)
 
-    love.graphics.print("state: " ..tostring(self.state), self.map.camX + 20, self.map.camY + 190)
-    love.graphics.print("direction: " ..tostring(self.direction), self.map.camX + 20, self.map.camY + 200)
-    love.graphics.print("active_direction " ..tostring(active_direction), self.map.camX + 20, self.map.camY + 210)
+    -- love.graphics.print("state: " ..tostring(self.state), self.map.camX + 20, self.map.camY + 190)
+    -- love.graphics.print("direction: " ..tostring(self.direction), self.map.camX + 20, self.map.camY + 200)
+    -- love.graphics.print("active_direction " ..tostring(active_direction), self.map.camX + 20, self.map.camY + 210)
 
-    love.graphics.print("FIREBALLS_ACTIVE: " ..tostring(FIREBALLS_ACTIVE), self.map.camX + 20, self.map.camY + 230)
-    love.graphics.print("remaining_fireballs: " ..tostring(remaining_fireballs), self.map.camX + 20, self.map.camY + 240)
-    love.graphics.print("Fireball timer: " ..string.format("%.2f", fireball_timer), self.map.camX + 20, self.map.camY + 250)
-    love.graphics.print("Fireball scale: " ..string.format(fireball_scale), self.map.camX + 20, self.map.camY + 260)
+    -- love.graphics.print("FIREBALLS_ACTIVE: " ..tostring(FIREBALLS_ACTIVE), self.map.camX + 20, self.map.camY + 230)
+    -- love.graphics.print("remaining_fireballs: " ..tostring(remaining_fireballs), self.map.camX + 20, self.map.camY + 240)
+    -- love.graphics.print("Fireball timer: " ..string.format("%.2f", fireball_timer), self.map.camX + 20, self.map.camY + 250)
+    -- love.graphics.print("Fireball scale: " ..string.format(fireball_scale), self.map.camX + 20, self.map.camY + 260)
 
-    love.graphics.print("ICE_ACTIVE: " ..tostring(ICE_ACTIVE), self.map.camX + 20, self.map.camY + 280)
-    love.graphics.print("CASTING_FROST: " ..tostring(CASTING_FROST), self.map.camX + 20, self.map.camY + 290)
-    love.graphics.print("ice_timer: " ..string.format("%.2f", ice_timer), self.map.camX + 20, self.map.camY + 300)
+    -- love.graphics.print("ICE_ACTIVE: " ..tostring(ICE_ACTIVE), self.map.camX + 20, self.map.camY + 280)
+    -- love.graphics.print("CASTING_FROST: " ..tostring(CASTING_FROST), self.map.camX + 20, self.map.camY + 290)
+    -- love.graphics.print("ice_timer: " ..string.format("%.2f", ice_timer), self.map.camX + 20, self.map.camY + 300)
 
-    love.graphics.print("active orbs: " ..string.format(ACTIVE_FB_ORBS + ACTIVE_ICE_ORBS), self.map.camX + 20, self.map.camY + 320)
+    -- love.graphics.print("active orbs: " ..string.format(ACTIVE_FB_ORBS + ACTIVE_ICE_ORBS), self.map.camX + 20, self.map.camY + 320)
     ----------------------------------------------------------------------------------------------------------------------------------
 
     if ACTIVE_FB_ORBS + ACTIVE_ICE_ORBS > 10 then
